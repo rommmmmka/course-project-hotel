@@ -33,9 +33,6 @@ def check_if_logged_in(request):
 
 def roomclass_list_get(checkindate, checkoutdate, numberofguests):
     roomclass_list = Roomclass.objects.raw("CALL get_roomclasses(%s, %s, %s);", [checkindate, checkoutdate, numberofguests])
-    print(roomclass_list)
-    for el in roomclass_list:
-        print(el)
     return roomclass_list
 
 

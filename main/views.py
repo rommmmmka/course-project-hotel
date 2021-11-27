@@ -58,6 +58,10 @@ def logout_action(request):
     return response
 
 
+def addorder_action(request):
+    return 0
+
+
 def index(request):
     form = LoginForm()
     return render(request, 'main/index.html', {
@@ -106,6 +110,8 @@ def up_add_order(request):
             'form': form,
             'prevpage_data': request.POST,
             'roomclass_list': roomclass_list,
+            'foodtype_list': Foodtype.objects.filter(avaliable=True),
+            'addservicetype_list': Addservicetype.objects.filter(avaliable=True),
         })
     return render(request, 'main/up_add_order1.html', {
         'form': form,

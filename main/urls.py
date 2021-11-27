@@ -7,6 +7,7 @@ urlpatterns = [
     path('action/register', views.register_action, name="register_action"),
     path('action/login', views.login_action, name="login_action"),
     path('action/logout', views.logout_action, name="logout_action"),
+    path('action/add_order', views.addorder_action, name="addorder_action"),
     path('user_panel', views.user_panel, name="user_panel"),
     path('user_panel/change_password', views.up_change_password, name="up_change_password"),
     path('user_panel/add_order', views.up_add_order, name="up_add_order"),

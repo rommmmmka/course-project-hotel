@@ -1,4 +1,4 @@
-# roomclass -> numberofpeople
+# roomclass -> numberofpeople, comment
 # room, foodtype, paymenttype, addservicetype -> avaliable
 from django.db import models
 
@@ -23,6 +23,7 @@ class Roomclass(models.Model):
     name = models.CharField(db_column='Name', max_length=30, blank=True, null=True)  # Field name made lowercase.
     cost = models.PositiveIntegerField(db_column='Cost', blank=True, null=True)  # Field name made lowercase.
     numberofpeople = models.PositiveIntegerField(db_column='NumberOfPeople', blank=True, null=True)
+    comment = models.CharField(db_column='Comment', max_length=200, blank=True, null=True)
 
     class Meta:
         managed = True

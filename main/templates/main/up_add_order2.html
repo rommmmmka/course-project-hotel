@@ -7,11 +7,29 @@
 {% block content %}
     Забронировать номер
     <a href="{% url 'user_panel' %}">[В пользовательскую панель]</a>
-    <form action="{% url 'up_add_order' %}" method="post">
+    <a href="{% url 'up_add_order' %}">[Назад]</a>
+    <form action="{% url 'addorder_action' %}" method="post">
         {% csrf_token %}
-        {% for el in radio_list %}
-            <label><input type="radio" name="roomclass" value="{{ el }}">{{ el }}</label>
-        {% endfor %}
+        Класс номера:
+        <div>
+            {% for el in roomclass_list %}
+                <label><input type="radio" name="roomclass" value="{{ el.roomclassid }}" required>{{ el.name }}</label>
+                <!-- https://habr.com/ru/post/465623/ -->
+            {% endfor %}
+        </div>
+        Тип еды:
+        <div class="">
+            {% for el in foodtype_list %}
+                <label><input type="radio" name="foodtype" value="{{ el }}">{{ el }}</label>
+            {% endfor %}
+        </div>
+        Дополнительные услуги:
+        <div class="">
+            {% for el in addservicetype_list %}
+                <label><input type="checkbox" name="addservicetypes" value="{{ el }}">{{ el }}</label>
+            {% endfor %}
+        </div>
+
         <button type="submit">Далее</button>
     </form>
 {% endblock %}
