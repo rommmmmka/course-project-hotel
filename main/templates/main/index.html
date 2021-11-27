@@ -1,21 +1,91 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
     Главная страница
 {% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/index.css' %}">
+{% endblock %}
+
+{% block nav %}
+    <a href="{% url 'register' %}" class="nav_button">РЕГИСТРАЦИЯ</a>
+    <a href="#login" class="nav_button" id="login_button">ВХОД</a>
+{% endblock %}
+
 {% block content %}
-    Вход <a href="{% url 'register' %}">[Регистрация]</a>
-    <form action="{% url 'login_action' %}" method="post">
-        {% csrf_token %}
-        {{ form.login }}
-        {{ form.password }}
-        <button type="submit">Войти</button>
-    </form>
-    {% if register_success == 'True' %}
-        Регистрация успешна!
-    {% endif %}
     {% if login_error == 'True' %}
-        Неправильный логин или пароль!
+        <div class="error">
+            Неправильный логин или пароль!
+        </div>
     {% endif %}
+    {% if register_success == 'True' %}
+        <div class="success">
+            Регистрация успешна!
+        </div>
+    {% endif %}
+    <div class="mainphoto">
+        <div class="mainphoto_title">Гостиница «Припять»</div>
+        <div class="mainphoto_desc">Крупнейшая гостиница Пинска, расположенная в историческом центре города</div>
+        <div class="mainphoto_button">
+            <a href="{% url 'register' %}" class="mainphoto_button_a">Зарегистрируйтесь, чтобы заказать номер</a>
+        </div>
+    </div>
+    <div class="title">
+        О нас
+    </div>
+    <div class="info_block">
+        <p class="info_block_text">
+            Построенная в 1986 году в архитектурном стиле «брутализм» гостиница «Припять» давно и по праву стала
+            своеобразной «визитной карточкой» города. Гостиница может похвастаться невероятно удачным месторасположением,
+            ведь она находится прямо между улицей Ленина (главной пешеходной улицей города) и набережной реки Пина.
+        </p>
+        <p class="info_block_text">
+            Гостиничный комплекс оборудован в соответствии со всеми современными стандартами: имеется разнообразный
+            выбор классов номеров, типов питания. На территории находится охраняемая парковка, в номерах имеется Wi-Fi.
+            В гостинице организована безбарьерная среда для людей с ограниченными возможностями.
+        </p>
+    </div>
+    <div class="title">
+        Как добраться
+    </div>
+    <div class="howtoget">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4900.334485731357!2d26.111640787799953!3d52.11308574240006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4727a3e2d21bb6fd%3A0x96f82df355323cb6!2z0J_RgNGL0L_Rj9GG0Yw!5e0!3m2!1sru!2sby!4v1638041936924!5m2!1sru!2sby" width="800" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        <div class="howtoget_right">
+            <div class="howtoget_address_title">
+                Наш адрес:
+            </div>
+            <div class="howtoget_address">
+                ул. Днепровской Флотилии, 31
+            </div>
+            <div class="howtoget_title">
+                Автобусные маршруты с вокзала:
+            </div>
+            <div class="howtoget_routes">
+                2, 10Э, 12, 12А, 13, 13А, 27, 36Э
+            </div>
+            <div class="howtoget_stop">
+                Остановка: площадь Кирова
+            </div>
+        </div>
+    </div>
+    <div class="title" id="login">
+        Вход в аккаунт
+    </div>
+    <div class="login_form">
+        <form action="{% url 'login_action' %}" method="post">
+            {% csrf_token %}
+            <div class="form_div">{{ form.login }}</div>
+            <div class="form_div">{{ form.password }}</div>
+            <button type="submit" class="btn">Войти</button>
+        </form>
+    </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+
 {% endblock %}

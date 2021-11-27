@@ -1,0 +1,89 @@
+.mainphoto {
+    height: 800px;
+    background-image: url('../images/background.png');
+    background-size: 100%;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+.mainphoto_title {
+    padding-top: 150px;
+    font-size: 65px;
+    text-shadow: 2px 2px 2px black;
+}
+
+.mainphoto_desc {
+    margin: 10px auto 0;
+    font-size: 24px;
+    width: 800px;
+    text-shadow: 2px 2px 2px black;
+}
+
+.mainphoto_button {
+    width: 600px;
+    margin: 200px auto 0;
+}
+
+.mainphoto_button_a {
+    display: block;
+    font-size: 30px;
+    text-decoration: none;
+    color: white;
+    border-radius: 40px;
+    background: #1a5475;
+    padding: 20px 30px 20px;
+    box-shadow: 0 6px 6px rgba(43, 0, 0, 0.5);
+}
+
+.mainphoto_button_a:hover {
+    background: #114765;
+}
+
+.mainphoto_button_a:active {
+    background: #093148;
+}
+
+.title {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px auto;
+}
+
+.info_block {
+    width: 1200px;
+    font-size: 24px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.info_block_text {
+    text-align: center;
+}
+
+.howtoget {
+    display: flex;
+    margin-top: 24px;
+}
+
+.howtoget_title, .howtoget_address_title {
+    margin-top: 20px;
+    width: 640px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.howtoget_routes, .howtoget_address {
+    margin-top: 20px;
+    width: 640px;
+    text-align: center;
+    font-size: 25px;
+}
+
+.howtoget_stop {
+    width: 640px;
+    text-align: center;
+    font-size: 25px;
+}

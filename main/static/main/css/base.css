@@ -1,0 +1,113 @@
+@font-face {
+    font-family: 'Montserrat Alternatives';
+    src: url('../fonts/MontserratAlternates-Regular.woff');
+}
+
+@font-face {
+    font-family: 'Montserrat Alternatives';
+    src: url('../fonts/MontserratAlternates-Bold.woff');
+    font-weight: bold;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat Alternatives";
+    background-color: lightgray;
+}
+
+.body_inner {
+    background-color: white;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    padding: 0 20px;
+    border-bottom: 1px solid darkgray;
+}
+
+.nav_button {
+    padding: 10px 20px 10px;
+    margin-left: 20px;
+    background-color: #1a5475;
+    border-radius: 20px;
+    text-decoration: none;
+    color: white;
+}
+
+.nav_button:hover {
+    background-color: #114765;
+}
+
+.nav_button:active {
+    background-color: #093148;
+}
+
+.error {
+    font-size: 24px;
+    font-weight: bold;
+    padding-left: 20px;
+    align-items: center;
+    background-color: lightcoral;
+}
+
+.success {
+    font-size: 24px;
+    font-weight: bold;
+    padding-left: 20px;
+    align-items: center;
+    background-color: lightgreen;
+}
+
+.textinput {
+    width: 100%;
+    margin: 0 auto 20px;
+    font-family: "Montserrat Alternatives";
+    font-size: 36px;
+    border: 0;
+    border-bottom: 1px solid black;
+}
+
+.textinput:focus {
+    outline: none;
+    border-bottom: 2px solid black;
+}
+
+.form_div {
+    width: 800px;
+    margin: 0 auto;
+}
+
+.btn {
+    display: block;
+    margin: 0 auto;
+    font-family: "Montserrat Alternatives";
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    padding: 20px 30px 20px;
+    background-color: #1a5475;
+    box-shadow: 0 4px 4px rgba(113, 0, 0, 0.25);
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.order_button:hover {
+    background-color: #114765;
+}
+
+.order_button:active {
+    background-color: #093148;
+    box-shadow: 0 4px 4px rgba(43, 0, 0, 0.25),
+                inset 0 -6px 8px rgba(85, 104, 103, 0.7);
+}
+
+.emptyspace {
+    height: 30px;
+}

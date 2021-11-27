@@ -13,26 +13,39 @@ class RegisterForm(ModelForm):
         widgets = {
             "login": TextInput(attrs={
                 'placeholder': 'Логин',
-                'required': 'True'
+                'required': 'True',
+                'class': 'textinput',
+                'minlength': 6,
+                'maxlength': 30,
             }),
             "passwordhash": PasswordInput(attrs={
                 'placeholder': 'Пароль',
-                'required': 'True'
+                'required': 'True',
+                'class': 'textinput',
+                'minlength': 6,
+                'maxlength': 30,
             }),
             "lastname": TextInput(attrs={
                 'placeholder': 'Фамилия',
-                'required': 'True'
+                'required': 'True',
+                'class': 'textinput',
+                'maxlength': 30,
             }),
             "firstname": TextInput(attrs={
                 'placeholder': 'Имя',
-                'required': 'True'
+                'required': 'True',
+                'class': 'textinput',
+                'maxlength': 30,
             }),
             "patronymic": TextInput(attrs={
-                'placeholder': 'Отчество (при наличии)'
+                'placeholder': 'Отчество (при наличии)',
+                'class': 'textinput',
+                'maxlength': 30,
             }),
             "phonenumber": TextInput(attrs={
                 'placeholder': 'Номер телефона',
-                'required': 'True'
+                'required': 'True',
+                'class': 'textinput',
             }),
         }
 
@@ -41,11 +54,16 @@ class LoginForm(Form):
     login = CharField(max_length=30, widget=TextInput(attrs={
         'placeholder': 'Логин',
         'required': 'True',
-
+        'class': 'textinput',
+        'minlength': 6,
+        'maxlength': 30,
     }))
     password = CharField(max_length=30, widget=PasswordInput(attrs={
         'placeholder': 'Пароль',
         'required': 'True',
+        'class': 'textinput',
+        'minlength': 6,
+        'maxlength': 30,
     }))
 
 

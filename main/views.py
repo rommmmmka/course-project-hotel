@@ -66,8 +66,10 @@ def addorder_action(request):
         print(request.POST)
         room = room_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['roomclass'])
         days = (to_date(request.POST['checkoutdate']) - to_date(request.POST['checkindate'])).days + 1
+        print(days)
         numberofguests = int(request.POST['numberofguests'])
         roomCost = int(Roomclass.objects.get(roomclassid=request.POST['roomclass']).cost)
+        print(roomCost)
         foodCost = int(Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost)
         addServicesCost = 0;
         for el in request.POST['addservicetypes']:

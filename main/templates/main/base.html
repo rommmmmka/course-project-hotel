@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
@@ -5,8 +6,27 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/base.css' %}">
+    {% block css %}{% endblock %}
 </head>
 <body>
-{% block content %}{% endblock %}
+    <div class="body_inner">
+        <header>
+            <div class="header_logo">
+                <a href="{% url 'index' %}">
+                    <img src="{% static 'main/images/logo.png' %}" alt="Гасцініца Прыпяць">
+                </a>
+            </div>
+            <nav>
+                {% block nav %}{% endblock %}
+            </nav>
+        </header>
+        {% block content %}{% endblock %}
+        <div class="emptyspace"></div>
+    </div>
+
+    <script src="{% static 'main/js/jquery.js' %}"></script>
+    <script src="{% static 'main/js/maskedinput.js' %}"></script>
+    {% block script %}{% endblock %}
 </body>
 </html>
