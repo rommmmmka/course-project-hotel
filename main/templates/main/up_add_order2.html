@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Бронирование номера
+{% endblock %}
+
+{% block content %}
+    Забронировать номер
+    <a href="{% url 'user_panel' %}">[В пользовательскую панель]</a>
+    <form action="{% url 'up_add_order' %}" method="post">
+        {% csrf_token %}
+        {% for el in radio_list %}
+            <label><input type="radio" name="roomclass" value="{{ el }}">{{ el }}</label>
+        {% endfor %}
+        <button type="submit">Далее</button>
+    </form>
+{% endblock %}

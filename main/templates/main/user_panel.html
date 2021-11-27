@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Панель пользователя
+{% endblock %}
+
+{% block content %}
+    Панель пользователя
+    <a href="{% url 'logout_action' %}">[Выйти]</a>
+    <a href="{% url 'up_change_password' %}">[Изменить пароль]</a>
+    <a href="{% url 'up_add_order' %}">[Создать заказ]</a>
+    <div class="">
+        История заказов:
+    </div>
+    {% for el in orders %}
+        <br>
+        <div class="">
+            {{ el.checkindate }}
+            <br>
+            {{ el.checkoutdate }}
+            <br>
+            {{ el.numberofguests }}
+            <br>
+            {{ el.cost }}
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Регистрация
+{% endblock %}
+
+{% block content %}
+    Регистрация <a href="{% url 'index' %}">[Вход]</a>
+    <form action="{% url 'register_action' %}" method="post">
+        {% csrf_token %}
+        {{ form.login }}
+        {{ form.passwordhash }}
+        {{ form.lastname }}
+        {{ form.firstname }}
+        {{ form.patronymic }}
+        {{ form.phonenumber }}
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    {% if register_error == 'True' %}
+        Пользователь с таким логином уже существует!
+    {% endif %}
+{% endblock %}
