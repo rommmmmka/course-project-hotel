@@ -10,6 +10,9 @@
     <a href="{% url 'up_add_order' %}">[Назад]</a>
     <form action="{% url 'addorder_action' %}" method="post">
         {% csrf_token %}
+        <input type="hidden" name="checkindate" value="{{ checkindate }}">
+        <input type="hidden" name="checkoutdate" value="{{ checkoutdate }}">
+        <input type="hidden" name="numberofguests" value="{{ numberofguests }}">
         Класс номера:
         <div>
             {% for el in roomclass_list %}
@@ -20,13 +23,19 @@
         Тип еды:
         <div class="">
             {% for el in foodtype_list %}
-                <label><input type="radio" name="foodtype" value="{{ el }}">{{ el }}</label>
+                <label><input type="radio" name="foodtype" value="{{ el.foodtypeid }}" required>{{ el.name }}</label>
             {% endfor %}
         </div>
         Дополнительные услуги:
         <div class="">
             {% for el in addservicetype_list %}
-                <label><input type="checkbox" name="addservicetypes" value="{{ el }}">{{ el }}</label>
+                <label><input type="checkbox" name="addservicetypes" value="{{ el.addservicetypeid }}">{{ el.name }}</label>
+            {% endfor %}
+        </div>
+        Способ оплаты:
+        <div class="">
+            {% for el in paymenttype_list %}
+                <label><input type="radio" name="paymenttype" value="{{ el.paymenttypeid }}" required>{{ el.name }}</label>
             {% endfor %}
         </div>
 

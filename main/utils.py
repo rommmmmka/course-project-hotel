@@ -3,6 +3,7 @@ from django.urls import reverse
 from urllib.parse import urlencode
 from django.shortcuts import redirect
 from .models import *
+from datetime import datetime
 
 
 def salt_generator(length):
@@ -32,13 +33,12 @@ def check_if_logged_in(request):
 
 
 def roomclass_list_get(checkindate, checkoutdate, numberofguests):
-    roomclass_list = Roomclass.objects.raw("CALL get_roomclasses(%s, %s, %s);", [checkindate, checkoutdate, numberofguests])
-    return roomclass_list
+    return Roomclass.objects.raw("CALL get_roomclasses(%s, %s, %s);", [checkindate, checkoutdate, numberofguests])
 
 
 def room_get(checkindate, checkoutdate, roomclassid):
-    room = Room.objects.raw("CALL get_room(%s, %s, %);", [checkindate, checkoutdate, roomclassid])
-    print(room)
-    for el in room:
-        print(el)
-    return room
+    return Room.objects.raw("CALL get_room(%s, %s, %s);", [checkindate, checkoutdate, roomclassid])
+
+
+def to_date(str):
+    return datetime.strptime(str, "%Y-%m-%d")

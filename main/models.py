@@ -1,4 +1,5 @@
 # roomclass -> numberofpeople, comment
+# foodtype -> comment
 # room, foodtype, paymenttype, addservicetype -> avaliable
 from django.db import models
 
@@ -61,6 +62,7 @@ class Foodtype(models.Model):
     name = models.CharField(db_column='Name', max_length=30, blank=True, null=True)  # Field name made lowercase.
     cost = models.PositiveIntegerField(db_column='Cost', blank=True, null=True)  # Field name made lowercase.
     avaliable = models.IntegerField(db_column='Avaliable', blank=True, null=True)
+    comment = models.CharField(db_column='Comment', max_length=200, blank=True, null=True)
 
     class Meta:
         managed = True

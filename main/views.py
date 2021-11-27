@@ -3,6 +3,7 @@ from .models import *
 from .forms import *
 from .utils import *
 import hashlib
+from datetime import datetime, timedelta
 
 """
 TODO
@@ -59,7 +60,45 @@ def logout_action(request):
 
 
 def addorder_action(request):
-    return 0
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    if request.method == 'POST':
+        print(request.POST)
+        room = room_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['roomclass'])
+        days = (to_date(request.POST['checkoutdate']) - to_date(request.POST['checkindate'])).days + 1
+        numberofguests = int(request.POST['numberofguests'])
+        roomCost = int(Roomclass.objects.get(roomclassid=request.POST['roomclass']).cost)
+        foodCost = int(Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost)
+        addServicesCost = 0;
+        for el in request.POST['addservicetypes']:
+            addServicesCost += int(Addservicetype.objects.get(addservicetypeid=el).cost)
+        cost = roomCost * days + foodCost * days * numberofguests + addServicesCost * days
+
+        orderinfo_obj = Orderinfo(
+            checkindate=request.POST['checkindate'],
+            checkoutdate=request.POST['checkoutdate'],
+            numberofguests=numberofguests,
+            cost=cost,
+        )
+        orderinfo_obj.visitorid_id = request.COOKIES.get('id')
+        orderinfo_obj.roomid_id = room[0].roomid
+        orderinfo_obj.save()
+        orderstatus_obj = Orderstatus(
+            orderid=orderinfo_obj,
+            orderactive=True,
+            orderpayed=False,
+        )
+        orderstatus_obj.paymenttypeid_id = request.POST['paymenttype']
+        orderstatus_obj.save()
+        food_obj = Food(orderid=orderinfo_obj)
+        food_obj.foodtypeid_id = request.POST['foodtype']
+        food_obj.save()
+        for el in request.POST['addservicetypes']:
+            addservices_obj = Addservices(orderid=orderinfo_obj)
+            addservices_obj.addservicetypeid_id = el
+            addservices_obj.save()
+        return redirect_with_get(user_panel, {'addingorder_success': True})
+    return redirect(user_panel)
 
 
 def index(request):
@@ -94,24 +133,21 @@ def up_change_password(request):
     return render(request, 'main/up_change_password.html')
 
 def up_add_order(request):
-    """
-    1:
-    Даты заселения, выселения, количество человек
-    Реализовать поиск свободного номера
-    Тип питания
-    Выбор доп услуг
-    """
     if not check_if_logged_in(request):
         return logout_action(request)
     form = AddOrderForm()
     if request.method == 'POST' and AddOrderForm(request.POST).is_valid():
         roomclass_list = roomclass_list_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['numberofguests'])
+        print(request.POST)
         return render(request, 'main/up_add_order2.html', {
             'form': form,
-            'prevpage_data': request.POST,
+            'checkindate': request.POST['checkindate'],
+            'checkoutdate': request.POST['checkoutdate'],
+            'numberofguests': request.POST['numberofguests'],
             'roomclass_list': roomclass_list,
             'foodtype_list': Foodtype.objects.filter(avaliable=True),
             'addservicetype_list': Addservicetype.objects.filter(avaliable=True),
+            'paymenttype_list': Paymenttype.objects.filter(avaliable=True),
         })
     return render(request, 'main/up_add_order1.html', {
         'form': form,
