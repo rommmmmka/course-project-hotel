@@ -1,6 +1,7 @@
 # roomclass -> numberofpeople, comment
 # foodtype -> comment
 # room, foodtype, paymenttype, addservicetype -> avaliable
+# visitor -> citizenship, passport
 from django.db import models
 
 
@@ -13,6 +14,8 @@ class Visitor(models.Model):
     firstname = models.CharField(db_column='Firstname', max_length=30, blank=True, null=True)  # Field name made lowercase.
     patronymic = models.CharField(db_column='Patronymic', max_length=30, blank=True, null=True)  # Field name made lowercase.
     phonenumber = models.CharField(db_column='PhoneNumber', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    citizenship = models.CharField(db_column='Citizenship', max_length=30, blank=True, null=True)
+    passport = models.CharField(db_column='Passport', max_length=15, blank=True, null=True)
 
     class Meta:
         managed = True

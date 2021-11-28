@@ -1,3 +1,4 @@
+from django.db.models import Subquery, OuterRef
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
@@ -44,6 +45,7 @@ def login_action(request):
             obj.save()
             response = redirect('user_panel')
             response.set_cookie('id', id, max_age=3600)
+            response.set_cookie('login', login, max_age=3600)
             response.set_cookie('session', session, max_age=3600)
             return response
         else:
@@ -123,9 +125,16 @@ def register(request):
 def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id'))
+    orderstatuses = Orderstatus.objects.filter(orderid=OuterRef("pk"))
+    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-orderid').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1]))
+    print(orders)
+    for el in orders:
+        print(el.orderid, el.active, el.payed)
     return render(request, 'main/user_panel.html', {
         'orders': orders,
+        'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
+        'currdate': datetime.now().date(),
+        'addingorder_success': request.GET.get('addingorder_success'),
     })
 
 
@@ -143,6 +152,7 @@ def up_add_order(request):
         print(request.POST)
         return render(request, 'main/up_add_order2.html', {
             'form': form,
+            'login': request.COOKIES.get('login'),
             'checkindate': request.POST['checkindate'],
             'checkoutdate': request.POST['checkoutdate'],
             'numberofguests': request.POST['numberofguests'],
@@ -153,4 +163,5 @@ def up_add_order(request):
         })
     return render(request, 'main/up_add_order1.html', {
         'form': form,
+        'login': request.COOKIES.get('login'),
     })

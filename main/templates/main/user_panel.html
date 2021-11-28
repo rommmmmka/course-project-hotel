@@ -1,27 +1,84 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
     Панель пользователя
 {% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/user_panel.css' %}?123">
+{% endblock %}
+
+{% block nav %}
+    <span class="nav_info">{{ personal_info.login }}</span>
+    <a href="{% url 'up_change_password' %}" class="nav_button">ИЗМЕНИТЬ ПАРОЛЬ</a>
+    <a href="{% url 'up_add_order' %}" class="nav_button">ЗАБРОНИРОВАТЬ НОМЕР</a>
+    <a href="{% url 'logout_action' %}" class="nav_button">ВЫЙТИ</a>
+{% endblock %}
+
 {% block content %}
-    Панель пользователя
-    <a href="{% url 'logout_action' %}">[Выйти]</a>
-    <a href="{% url 'up_change_password' %}">[Изменить пароль]</a>
-    <a href="{% url 'up_add_order' %}">[Создать заказ]</a>
-    <div class="">
-        История заказов:
+    {% if addingorder_success == 'True' %}
+        <div class="success">
+            Заказ успешно добавлен!
+        </div>
+    {% endif %}
+    <div class="title">
+        Личная информация
     </div>
+    <div class="personalinfo_block">
+        <div class="personalinfo">
+            <span class="personalinfo_left">Фамилия: </span><span class="personalinfo_right">{{ personal_info.lastname }}</span>
+        </div>
+        <div class="personalinfo">
+            <span class="personalinfo_left">Имя: </span><span class="personalinfo_right">{{ personal_info.firstname }}</span>
+        </div>
+        <div class="personalinfo">
+            <span class="personalinfo_left">Отчество: </span><span class="personalinfo_right">{{ personal_info.patronymic }}</span>
+        </div>
+        <div class="personalinfo">
+            <span class="personalinfo_left">Гражданство: </span><span class="personalinfo_right">{{ personal_info.citizenship }}</span>
+        </div>
+        <div class="personalinfo">
+            <span class="personalinfo_left">Серия и номер паспорта: </span><span class="personalinfo_right">{{ personal_info.passport }}</span>
+        </div>
+        <div class="personalinfo">
+            <span class="personalinfo_left">Номер телефона: </span><span class="personalinfo_right">{{ personal_info.phonenumber }}</span>
+        </div>
+    </div>
+    <div class="title">
+        История заказов
+    </div>
+    {% if not orders.exists %}
+        <img src="{% static 'main/images/empty.png' %}" alt="Тут пусто" class="orders_empty">
+    {% endif %}
     {% for el in orders %}
-        <br>
-        <div class="">
-            {{ el.checkindate }}
-            <br>
-            {{ el.checkoutdate }}
-            <br>
-            {{ el.numberofguests }}
-            <br>
-            {{ el.cost }}
+        <div class="order_{% if not el.active %}non{% endif %}active order_{% if currdate < el.checkindate and el.active %}editable{% else %}noneditable{% endif %}">
+            <div class="order_left">
+                <div class="order_left_div">
+                    <span class="order_title">Дата заселения:</span>
+                    <span class="order_text">{{ el.checkindate }}</span>
+                    <span class="order_title">Дата выселения:</span>
+                    <span class="order_text">{{ el.checkoutdate }}</span>
+                    <span class="order_title">Статус заказа:</span>
+                    <span class="order_text">{% if el.active %}Активный{% else %}Отменён{% endif %}</span>
+                </div>
+                {% if currdate < el.checkindate and el.active %}
+                    <div class="order_button_div"><a href="#" class="order_button">Отменить</a></div>
+                {% endif %}
+            </div>
+            <div class="order_right">
+                <div class="order_right_div">
+                    <span class="order_title">Количество посетилелей:</span>
+                    <span class="order_text">{{ el.numberofguests }}</span>
+                    <span class="order_title">Стоимость проживания:</span>
+                    <span class="order_text">{{ el.cost }}</span>
+                    <span class="order_title">Статус оплаты:</span>
+                    <span class="order_text">{% if el.payed %}Оплачен{% else %}Неоплачен{% endif %}</span>
+                </div>
+                {% if currdate < el.checkindate and el.active %}
+                    <div class="order_button_div"><a href="#" class="order_button">Отредактировать</a></div>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 {% endblock %}

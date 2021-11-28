@@ -4,17 +4,25 @@
     Регистрация
 {% endblock %}
 
+{% block nav %}
+    <a href="{% url 'index' %}#login" class="nav_button" id="login_button">ВХОД</a>
+{% endblock %}
+
 {% block content %}
-    Регистрация <a href="{% url 'index' %}">[Вход]</a>
+    <div class="title">
+        Регистрация
+    </div>
     <form action="{% url 'register_action' %}" method="post">
         {% csrf_token %}
-        {{ form.login }}
-        {{ form.passwordhash }}
-        {{ form.lastname }}
-        {{ form.firstname }}
-        {{ form.patronymic }}
-        {{ form.phonenumber }}
-        <button type="submit">Зарегистрироваться</button>
+        <div class="form_div">{{ form.login }}</div>
+        <div class="form_div">{{ form.passwordhash }}</div>
+        <div class="form_div">{{ form.lastname }}</div>
+        <div class="form_div">{{ form.firstname }}</div>
+        <div class="form_div">{{ form.patronymic }}</div>
+        <div class="form_div">{{ form.citizenship }}</div>
+        <div class="form_div">{{ form.passport }}</div>
+        <div class="form_div">{{ form.phonenumber }}</div>
+        <button type="submit" class="btn mt10">Зарегистрироваться</button>
     </form>
     {% if register_error == 'True' %}
         Пользователь с таким логином уже существует!

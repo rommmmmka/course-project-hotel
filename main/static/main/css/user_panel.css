@@ -1,0 +1,93 @@
+.personalinfo_block {
+    border-bottom: 1px solid darkgray;
+    padding-bottom: 20px;
+}
+
+.personalinfo {
+    font-size: 24px;
+    text-align: center;
+}
+
+.personalinfo_left {
+    font-weight: bold;
+}
+
+.orders_empty {
+    display: block;
+    margin: 0 auto;
+    height: 200px;
+}
+
+.order_active {
+    display: flex;
+    width: 800px;
+    border-radius: 20px;
+    background-color: lightgreen;
+    border: 2px solid black;
+    margin: 10px auto 0;
+}
+
+.order_nonactive {
+    display: flex;
+    width: 800px;
+    border-radius: 20px;
+    background-color: lightcoral;
+    border: 2px solid black;
+    margin: 10px auto 0;
+}
+
+.order_editable {
+    height: 213px;
+}
+
+.order_noneditable {
+    height: 144px;
+}
+
+.order_left, .order_right {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    text-align: center;
+}
+
+.order_left_div, .order_right_div {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.order_title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.order_text {
+    font-size: 20px;
+
+}
+
+.order_button_div {
+    margin-top: 20px;
+}
+
+.order_button {
+    font-size: 24px;
+    padding: 10px 15px;
+    background-color: #1a5475;
+    border-radius: 15px;
+    color: white;
+    text-decoration: none;
+}
+
+.order_button:hover {
+    background-color: #114765;
+}
+
+.order_button:active {
+    background-color: #093148;
+}
+
+.order_button_inactive {
+
+}
