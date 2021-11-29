@@ -126,10 +126,7 @@ def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
     orderstatuses = Orderstatus.objects.filter(orderid=OuterRef("pk"))
-    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-orderid').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1]))
-    print(orders)
-    for el in orders:
-        print(el.orderid, el.active, el.payed)
+    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1]))
     return render(request, 'main/user_panel.html', {
         'orders': orders,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),

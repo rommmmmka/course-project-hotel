@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Панель пользователя
+    Личный кабинет
 {% endblock %}
 
 {% block css %}
@@ -60,7 +60,16 @@
                     <span class="order_title">Дата выселения:</span>
                     <span class="order_text">{{ el.checkoutdate }}</span>
                     <span class="order_title">Статус заказа:</span>
-                    <span class="order_text">{% if el.active %}Активный{% else %}Отменён{% endif %}</span>
+                    <span class="order_text">
+                        {% if el.active %}
+                            {% if currdate < el.checkindate %}
+                                Активный
+                            {% else %}
+                                Выполнен
+                            {% endif %}
+                        {% else %}
+                            Отменён
+                        {% endif %}</span>
                 </div>
                 {% if currdate < el.checkindate and el.active %}
                     <div class="order_button_div"><a href="#" class="order_button">Отменить</a></div>
