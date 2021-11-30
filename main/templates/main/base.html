@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}{% endblock %}</title>
     <link rel="icon" href="{% static 'main/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/toast.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/base.css' %}">
     {% block css %}{% endblock %}
 </head>
@@ -23,11 +24,13 @@
             </nav>
         </header>
         {% block content %}{% endblock %}
-        <div class="emptyspace"></div>
+        <div class="emptyspace" id="emptyspace"></div>
     </div>
 
     <script src="{% static 'main/js/jquery.js' %}"></script>
     <script src="{% static 'main/js/maskedinput.js' %}"></script>
+    <script src="{% static 'main/js/toast.js' %}"></script>
     {% block script %}{% endblock %}
+    <script src="{% static 'main/js/remove_get_from_addressbar.js' %}"></script>
 </body>
 </html>

@@ -73,6 +73,14 @@ header {
     background-color: lightgreen;
 }
 
+.info {
+    font-size: 24px;
+    font-weight: bold;
+    padding-left: 20px;
+    align-items: center;
+    background-color: lightgoldenrodyellow;
+}
+
 .title {
     font-size: 40px;
     font-weight: bold;

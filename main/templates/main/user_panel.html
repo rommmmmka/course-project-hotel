@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/user_panel.css' %}?123">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/user_panel.css' %}">
 {% endblock %}
 
 {% block nav %}
@@ -17,11 +17,6 @@
 {% endblock %}
 
 {% block content %}
-    {% if addingorder_success == 'True' %}
-        <div class="success">
-            Заказ успешно добавлен!
-        </div>
-    {% endif %}
     <div class="title">
         Личная информация
     </div>
@@ -43,6 +38,9 @@
         </div>
         <div class="personalinfo">
             <span class="personalinfo_left">Номер телефона: </span><span class="personalinfo_right">{{ personal_info.phonenumber }}</span>
+        </div>
+        <div class="personalinfo_button">
+            <a href="#" class="personalinfo_button_a">Отредактировать информацию</a>
         </div>
     </div>
     <div class="title">
@@ -82,7 +80,7 @@
                     <span class="order_title">Стоимость проживания:</span>
                     <span class="order_text">{{ el.cost }}</span>
                     <span class="order_title">Статус оплаты:</span>
-                    <span class="order_text">{% if el.payed %}Оплачен{% else %}Неоплачен{% endif %}</span>
+                    <span class="order_text">{{ el.paymentname }} ({% if el.payed %}оплачен{% else %}неоплачен{% endif %})</span>
                 </div>
                 {% if currdate < el.checkindate and el.active %}
                     <div class="order_button_div"><a href="#" class="order_button">Отредактировать</a></div>
@@ -90,4 +88,18 @@
             </div>
         </div>
     {% endfor %}
+{% endblock %}
+
+{% block script %}
+    {% if addingorder_success == 'True' %}
+        <script>
+            new Toast({
+                title: false,
+                text: 'Заказ успешно добавлен!',
+                theme: 'success',
+                autohide: true,
+                interval: 5000,
+            });
+        </script>
+    {% endif %}
 {% endblock %}

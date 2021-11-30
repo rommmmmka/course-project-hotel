@@ -15,16 +15,6 @@
 {% endblock %}
 
 {% block content %}
-    {% if login_error == 'True' %}
-        <div class="error">
-            Неправильный логин или пароль!
-        </div>
-    {% endif %}
-    {% if register_success == 'True' %}
-        <div class="success">
-            Регистрация произведена успешно!
-        </div>
-    {% endif %}
     <div class="mainphoto">
         <div class="mainphoto_title">Гостиница «Припять»</div>
         <div class="mainphoto_desc">Крупнейшая гостиница Пинска, расположенная в историческом центре города</div>
@@ -70,16 +60,18 @@
             </div>
         </div>
     </div>
-    <div class="title" id="login">
-        Вход в аккаунт
-    </div>
-    <div class="login_form">
-        <form action="{% url 'login_action' %}" method="post">
-            {% csrf_token %}
-            <div class="form_div">{{ form.login }}</div>
-            <div class="form_div">{{ form.password }}</div>
-            <button type="submit" class="btn">Войти</button>
-        </form>
+    <div class="login_box" id="login">
+        <div class="title">
+            Вход в аккаунт
+        </div>
+        <div class="login_form">
+            <form action="{% url 'login_action' %}" method="post">
+                {% csrf_token %}
+                <div class="form_div">{{ form.login }}</div>
+                <div class="form_div">{{ form.password }}</div>
+                <button type="submit" class="btn">Войти</button>
+            </form>
+        </div>
     </div>
 
 
@@ -87,5 +79,46 @@
 {% endblock %}
 
 {% block script %}
-
+    <script src="{% static 'main/js/index.js' %}"></script>
+    {% if play_login_anim == 'True' %}
+        <script>
+            document.querySelector('#login').scrollIntoView({
+                behavior: 'smooth'
+            });
+            playanim();
+        </script>
+    {% endif %}
+    {% if login_error == 'True' %}
+        <script>
+            new Toast({
+                title: false,
+                text: 'Неправильный логин или пароль!',
+                theme: 'danger',
+                autohide: true,
+                interval: 5000,
+            });
+        </script>
+    {% endif %}
+    {% if register_success == 'True' %}
+        <script>
+            new Toast({
+                title: false,
+                text: 'Регистрация произведена успешно!',
+                theme: 'success',
+                autohide: true,
+                interval: 5000,
+            });
+        </script>
+    {% endif %}
+    {% if logout_action == 'True' %}
+        <script>
+            new Toast({
+                title: false,
+                text: 'Вы вышли из аккаунта!',
+                theme: 'warning',
+                autohide: true,
+                interval: 5000,
+            });
+        </script>
+    {% endif %}
 {% endblock %}

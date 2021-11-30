@@ -2,6 +2,7 @@
 # foodtype -> comment
 # room, foodtype, paymenttype, addservicetype -> avaliable
 # visitor -> citizenship, passport
+# room -> del hotelnumber
 from django.db import models
 
 
@@ -13,7 +14,7 @@ class Visitor(models.Model):
     lastname = models.CharField(db_column='Lastname', max_length=30, blank=True, null=True)  # Field name made lowercase.
     firstname = models.CharField(db_column='Firstname', max_length=30, blank=True, null=True)  # Field name made lowercase.
     patronymic = models.CharField(db_column='Patronymic', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    phonenumber = models.CharField(db_column='PhoneNumber', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    phonenumber = models.CharField(db_column='PhoneNumber', max_length=19, blank=True, null=True)  # Field name made lowercase.
     citizenship = models.CharField(db_column='Citizenship', max_length=30, blank=True, null=True)
     passport = models.CharField(db_column='Passport', max_length=15, blank=True, null=True)
 
@@ -37,7 +38,6 @@ class Roomclass(models.Model):
 class Room(models.Model):
     roomid = models.AutoField(db_column='RoomId', primary_key=True)  # Field name made lowercase.
     roomclassid = models.ForeignKey('Roomclass', models.DO_NOTHING, db_column='RoomClassId', blank=True, null=True)  # Field name made lowercase.
-    hotelnumber = models.PositiveIntegerField(db_column='HotelNumber', blank=True, null=True)  # Field name made lowercase.
     roomnumber = models.PositiveIntegerField(db_column='RoomNumber', blank=True, null=True)  # Field name made lowercase.
     avaliable = models.IntegerField(db_column='Avaliable', blank=True, null=True)
 

@@ -18,7 +18,7 @@ TODO
 
 
 def register_action(request):
-    if request.method == 'POST' and RegisterForm(request.POST).is_valid():
+    if request.method == 'POST':
         registrationData = request.POST.copy()
         # loginRepeats = True if len(list(Visitor.objects.raw(f"SELECT * FROM main_visitor WHERE Login = '{registrationData.__getitem__('login')}'"))) == 1 else False
         if check_if_login_repeats(registrationData['login']):
@@ -33,7 +33,7 @@ def register_action(request):
 
 
 def login_action(request):
-    if request.method == 'POST' and LoginForm(request.POST).is_valid():
+    if request.method == 'POST':
         login = request.POST['login']
         passwordHashed = str(hashlib.sha256(
             str(login + request.POST['password'] + '4lmAIQg0eRvU').encode('utf-8')).hexdigest())  # random salt
@@ -55,7 +55,7 @@ def login_action(request):
 
 
 def logout_action(request):
-    response = redirect('index')
+    response = redirect_with_get('index', {'logout_action': True})
     response.delete_cookie('id')
     response.delete_cookie('session')
     return response
@@ -67,13 +67,13 @@ def addorder_action(request):
     if request.method == 'POST':
         print(request.POST)
         room = room_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['roomclass'])
-        days = (to_date(request.POST['checkoutdate']) - to_date(request.POST['checkindate'])).days + 1
-        print(days)
+        days = (to_date(request.POST['checkoutdate']) - to_date(request.POST['checkindate'])).days
+        print(room)
         numberofguests = int(request.POST['numberofguests'])
         roomCost = int(Roomclass.objects.get(roomclassid=request.POST['roomclass']).cost)
         print(roomCost)
         foodCost = int(Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost)
-        addServicesCost = 0;
+        addServicesCost = 0
         for el in request.POST['addservicetypes']:
             addServicesCost += int(Addservicetype.objects.get(addservicetypeid=el).cost)
         cost = roomCost * days + foodCost * days * numberofguests + addServicesCost * days
@@ -111,6 +111,8 @@ def index(request):
         'form': form,
         'register_success': request.GET.get('register_success'),
         'login_error': request.GET.get('login_error'),
+        'logout_action': request.GET.get('logout_action'),
+        'play_login_anim': request.GET.get('play_login_anim'),
     })
 
 
@@ -125,8 +127,10 @@ def register(request):
 def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    orderstatuses = Orderstatus.objects.filter(orderid=OuterRef("pk"))
-    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1]))
+    orderstatuses = Orderstatus.objects.annotate(paymentname=Paymenttype.objects.values('name')[:1])
+    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1])).annotate(paymentname=Subquery(orderstatuses.values('paymentname')[:1]))
+    for el in orders:
+        print(el.paymentname)
     return render(request, 'main/user_panel.html', {
         'orders': orders,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
@@ -143,12 +147,27 @@ def up_change_password(request):
 def up_add_order(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    form = AddOrderForm()
-    if request.method == 'POST' and AddOrderForm(request.POST).is_valid():
+    if request.method == 'POST':
+        if request.POST['goback'] == 'True':
+            return render(request, 'main/up_add_order1.html', {
+                'login': request.COOKIES.get('login'),
+                'goback': True,
+                'error_no_empty_rooms': False,
+                'checkindate': request.POST['checkindate'],
+                'checkoutdate': request.POST['checkoutdate'],
+                'numberofguests': request.POST['numberofguests'],
+            })
         roomclass_list = roomclass_list_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['numberofguests'])
-        print(request.POST)
+        if len(roomclass_list) == 0:
+            return render(request, 'main/up_add_order1.html', {
+                'login': request.COOKIES.get('login'),
+                'goback': True,
+                'error_no_empty_rooms': True,
+                'checkindate': request.POST['checkindate'],
+                'checkoutdate': request.POST['checkoutdate'],
+                'numberofguests': request.POST['numberofguests'],
+            })
         return render(request, 'main/up_add_order2.html', {
-            'form': form,
             'login': request.COOKIES.get('login'),
             'checkindate': request.POST['checkindate'],
             'checkoutdate': request.POST['checkoutdate'],
@@ -159,6 +178,7 @@ def up_add_order(request):
             'paymenttype_list': Paymenttype.objects.filter(avaliable=True),
         })
     return render(request, 'main/up_add_order1.html', {
-        'form': form,
         'login': request.COOKIES.get('login'),
+        'goback': False,
+        'error_no_empty_rooms': False,
     })

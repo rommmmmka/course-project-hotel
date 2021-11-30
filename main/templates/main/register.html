@@ -1,21 +1,25 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
     Регистрация
 {% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}#login" class="nav_button" id="login_button">УЖЕ ЕСТЬ АККАУНТ? ВОЙТИ</a>
+    <a href="{% url 'index' %}?play_login_anim=True" class="nav_button" id="login_button">УЖЕ ЕСТЬ АККАУНТ? ВОЙТИ</a>
 {% endblock %}
 
 {% block content %}
     <div class="title">
         Регистрация
     </div>
-    <form action="{% url 'register_action' %}" method="post">
+    <form onsubmit="return catchSubmit(event)" action="{% url 'register_action' %}" method="post">
         {% csrf_token %}
         <div class="form_div">{{ form.login }}</div>
         <div class="form_div">{{ form.passwordhash }}</div>
+        <div class="form_div">
+            <input type="password" placeholder="Повторите пароль" class="textinput" id="passinput2" minlength="6" maxlength="30" pattern="[A-Za-z0-9_]+" required>
+        </div>
         <div class="form_div">{{ form.lastname }}</div>
         <div class="form_div">{{ form.firstname }}</div>
         <div class="form_div">{{ form.patronymic }}</div>
@@ -24,7 +28,33 @@
         <div class="form_div">{{ form.phonenumber }}</div>
         <button type="submit" class="btn mt10">Зарегистрироваться</button>
     </form>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'main/js/register.js' %}"></script>
+    <script>
+        function catchSubmit(e) {
+            if (document.getElementById('passinput1').value !== document.getElementById('passinput2').value) {
+                e.preventDefault();
+                new Toast({
+                title: false,
+                text: 'Пароли не совпадают!',
+                theme: 'danger',
+                autohide: true,
+                interval: 5000,
+            });
+            }
+        }
+    </script>
     {% if register_error == 'True' %}
-        Пользователь с таким логином уже существует!
+        <script>
+            new Toast({
+                title: false,
+                text: 'Пользоатель с таким логином уже существует!',
+                theme: 'danger',
+                autohide: true,
+                interval: 5000,
+            });
+        </script>
     {% endif %}
 {% endblock %}

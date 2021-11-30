@@ -12,6 +12,28 @@
     font-weight: bold;
 }
 
+.personalinfo_button {
+    font-size: 20px;
+    text-align: center;
+    margin: 20px auto 5px;
+}
+
+.personalinfo_button_a {
+    padding: 10px 20px 10px;
+    background-color: #1a5475;
+    border-radius: 20px;
+    text-decoration: none;
+    color: white;
+}
+
+.personalinfo_button_a:hover {
+    background-color: #114765;
+}
+
+.personalinfo_button_a:active {
+    background-color: #093148;
+}
+
 .orders_empty {
     display: block;
     margin: 0 auto;
@@ -64,7 +86,6 @@
 
 .order_text {
     font-size: 20px;
-
 }
 
 .order_button_div {

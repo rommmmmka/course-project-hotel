@@ -1,17 +1,51 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
     Бронирование номера
 {% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/up_add_order.css' %}">
+{% endblock %}
+
+{% block nav %}
+    <span class="nav_info">{{ login }}</span>
+    <a href="{% url 'user_panel' %}" class="nav_button">В ЛИЧНЫЙ КАБИНЕТ</a>
+{% endblock %}
+
 {% block content %}
-    Забронировать номер
-    <a href="{% url 'user_panel' %}">[В пользовательскую панель]</a>
+    <div class="title">Бронирование номера</div>
     <form action="{% url 'up_add_order' %}" method="post">
         {% csrf_token %}
-        {{ form.checkindate }}
-        {{ form.checkoutdate }}
-        {{ form.numberofguests }}
-        <button type="submit">Далее</button>
+        <div class="addorder1_dates">
+            <div class="addorder1_date">
+                <span class="addorder1_date_comm">Дата заселения:</span>
+                <input type="date" class="dateinput" name="checkindate" {% if goback %}value="{{ checkindate }}" {% endif %}required>
+            </div>
+            <div class="addorder1_date">
+                <span class="addorder1_date_comm">Дата выселения:</span>
+                <input type="date" class="dateinput" name="checkoutdate" {% if goback %}value="{{ checkoutdate }}" {% endif %}required>
+            </div>
+        </div>
+        <div class="addorder1_numberofguests_input_block">
+            <input type="number" placeholder="Количество проживающих" min="1" max="4" name="numberofguests" {% if goback %}value="{{ numberofguests }}" {% endif %}class="textinput addorder1_numberofguests_input" required>
+        </div>
+        <input type="hidden" name="goback" value="False">
+        <button type="submit" class="btn">Далее</button>
     </form>
+{% endblock %}
+
+{% block script %}
+    {% if error_no_empty_rooms %}
+        <script>
+            new Toast({
+                title: false,
+                text: 'Свободные комнаты на данные дни отсутствуют! Измените параметры заказа.',
+                theme: 'danger',
+                autohide: true,
+                interval: 7000,
+            });
+        </script>
+    {% endif %}
 {% endblock %}

@@ -17,6 +17,7 @@ class RegisterForm(ModelForm):
                 'class': 'textinput',
                 'minlength': 6,
                 'maxlength': 30,
+                'pattern': '[A-Za-z0-9_]+',
             }),
             "passwordhash": PasswordInput(attrs={
                 'placeholder': 'Пароль',
@@ -24,6 +25,8 @@ class RegisterForm(ModelForm):
                 'class': 'textinput',
                 'minlength': 6,
                 'maxlength': 30,
+                'pattern': '[A-Za-z0-9_]+',
+                'id': 'passinput1',
             }),
             "lastname": TextInput(attrs={
                 'placeholder': 'Фамилия',
@@ -58,6 +61,8 @@ class RegisterForm(ModelForm):
                 'placeholder': 'Номер телефона',
                 'required': 'True',
                 'class': 'textinput',
+                'id': 'phonenumber',
+                'maxlength': 19,
             }),
         }
 
@@ -69,6 +74,7 @@ class LoginForm(Form):
         'class': 'textinput',
         'minlength': 6,
         'maxlength': 30,
+        'pattern': '[A-Za-z0-9_]+',
     }))
     password = CharField(max_length=30, widget=PasswordInput(attrs={
         'placeholder': 'Пароль',
@@ -76,19 +82,22 @@ class LoginForm(Form):
         'class': 'textinput',
         'minlength': 6,
         'maxlength': 30,
+        'pattern': '[A-Za-z0-9_]+',
     }))
 
 
 class AddOrderForm(Form):
     checkindate = DateField(widget=DateInput(attrs={
-        'placeholder': 'Дата заселения',
         'required': 'True',
+        'class': 'dateinput',
     }))
     checkoutdate = DateField(widget=DateInput(attrs={
-        'placeholder': 'Дата выселения',
         'required': 'True',
+        'class': 'dateinput',
     }))
     numberofguests = IntegerField(min_value=1, max_value=4, widget=NumberInput(attrs={
         'placeholder': 'Количество проживающих',
         'required': 'True',
+        'class': 'textinput addorder1_numberofguests_input'
     }))
+    goback = BooleanField()

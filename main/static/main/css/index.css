@@ -80,3 +80,19 @@
     text-align: center;
     font-size: 25px;
 }
+
+@keyframes anim1 {
+    from {
+        background-color: white;
+    }
+    50% {
+        background-color: lightblue;
+    }
+    to {
+        background-color: white;
+    }
+}
+
+.anim {
+    animation: anim1 2s;
+}

@@ -1,44 +1,74 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
     Бронирование номера
 {% endblock %}
 
-{% block content %}
-    Забронировать номер
-    <a href="{% url 'user_panel' %}">[В пользовательскую панель]</a>
-    <a href="{% url 'up_add_order' %}">[Назад]</a>
-    <form action="{% url 'addorder_action' %}" method="post">
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/up_add_order.css' %}?123">
+{% endblock %}
+
+{% block nav %}
+    <span class="nav_info">{{ login }}</span>
+    <a href="{% url 'user_panel' %}" class="nav_button">В ЛИЧНЫЙ КАБИНЕТ</a>
+    <form action="{% url 'up_add_order' %}" method="post" class="nav_form">
         {% csrf_token %}
         <input type="hidden" name="checkindate" value="{{ checkindate }}">
         <input type="hidden" name="checkoutdate" value="{{ checkoutdate }}">
         <input type="hidden" name="numberofguests" value="{{ numberofguests }}">
-        Класс номера:
-        <div>
+        <input type="hidden" name="goback" value="True">
+        <button type="submit" class="nav_button nav_button_tag">НАЗАД</button>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <div class="title">Бронирование номера</div>
+    <form action="{% url 'addorder_action' %}" method="post">
+        {% csrf_token %}
+        <div class="addorder1_dates">
+            <div class="addorder1_date">
+                <span class="addorder1_date_comm">Дата заселения:</span>
+                <input type="date" class="dateinput input_disabled" name="checkindate" value="{{ checkindate }}" readonly>
+            </div>
+            <div class="addorder1_date">
+                <span class="addorder1_date_comm">Дата выселения:</span>
+                <input type="date" class="dateinput input_disabled" name="checkoutdate" value="{{ checkoutdate }}" readonly>
+            </div>
+        </div>
+        <div class="addorder1_numberofguests_input_block">
+            <input type="number" class="textinput addorder1_numberofguests_input input_disabled" name="numberofguests" value="{{ numberofguests }}" readonly>
+        </div>
+        <div class="order_title">Класс номера:</div>
+        <div class="order_title_comment">(наведите на класс для получения доп. информации)</div>
+        <div class="order_title_comment">(цена указана за одну ночь)</div>
+        <div class="addorder2_block">
             {% for el in roomclass_list %}
-                <label><input type="radio" name="roomclass" value="{{ el.roomclassid }}" required>{{ el.name }}</label>
-                <!-- https://habr.com/ru/post/465623/ -->
+                <label title="{{ el.comment }}"><input type="radio" name="roomclass" value="{{ el.roomclassid }}" required> {{ el.name }} ({{ el.cost }} руб.)</label>
             {% endfor %}
         </div>
-        Тип еды:
-        <div class="">
+        <div class="order_title_mt">Тип питания:</div>
+        <div class="order_title_comment">(наведите на тип для получения доп. информации)</div>
+        <div class="order_title_comment">(цена указана за одну ночь на одного человека)</div>
+        <div class="addorder2_block">
             {% for el in foodtype_list %}
-                <label><input type="radio" name="foodtype" value="{{ el.foodtypeid }}" required>{{ el.name }}</label>
+                <label title="{{ el.comment }}"><input type="radio" name="foodtype" value="{{ el.foodtypeid }}" required> {{ el.name }} ({{ el.cost }} руб.)</label>
             {% endfor %}
         </div>
-        Дополнительные услуги:
-        <div class="">
+        <div class="order_title_mt">Дополнительные услуги:</div>
+        <div class="order_title_comment">(цена указана за одну ночь)</div>
+        <div class="addorder2_block">
             {% for el in addservicetype_list %}
-                <label><input type="checkbox" name="addservicetypes" value="{{ el.addservicetypeid }}">{{ el.name }}</label>
+                <label><input type="checkbox" name="addservicetypes" value="{{ el.addservicetypeid }}"> {{ el.name }} ({{ el.cost }} руб.)</label>
             {% endfor %}
         </div>
-        Способ оплаты:
-        <div class="">
+        <div class="order_title_mt">Способ оплаты:</div>
+        <div class="addorder2_block">
             {% for el in paymenttype_list %}
-                <label><input type="radio" name="paymenttype" value="{{ el.paymenttypeid }}" required>{{ el.name }}</label>
+                <label><input type="radio" name="paymenttype" value="{{ el.paymenttypeid }}" required> {{ el.name }}</label>
             {% endfor %}
         </div>
 
-        <button type="submit">Далее</button>
+        <button type="submit" class="btn">Далее</button>
     </form>
 {% endblock %}
