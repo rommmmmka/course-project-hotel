@@ -5,6 +5,7 @@ from .forms import *
 from .utils import *
 import hashlib
 from datetime import datetime, timedelta
+from django.db import connection
 
 """
 TODO
@@ -127,10 +128,15 @@ def register(request):
 def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    orderstatuses = Orderstatus.objects.annotate(paymentname=Paymenttype.objects.values('name')[:1])
-    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1])).annotate(paymentname=Subquery(orderstatuses.values('paymentname')[:1]))
+    # orderstatuses = Orderstatus.objects.extra(select={"paymentname": "SELECT name FROM paymenttype WHERE orderstatus.PaymentTypeId = paymenttype.PaymentTypeId"})
+    orders = Orderinfo.objects.extra(select={
+        "active": "SELECT orderactive FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
+        "payed": "SELECT orderpayed FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
+        "paymentname": "SELECT name FROM paymenttype WHERE paymenttype.PaymentTypeId = (SELECT PaymentTypeId FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId)"
+    }).order_by('-checkindate')
     for el in orders:
-        print(el.paymentname)
+        print(el)
+    #orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1])).annotate(paymentname=Subquery(orderstatuses.values('paymentname')[:1]))
     return render(request, 'main/user_panel.html', {
         'orders': orders,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
