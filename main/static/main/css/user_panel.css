@@ -89,16 +89,20 @@
 }
 
 .order_button_div {
-    margin-top: 20px;
+    margin-top: 8px;
 }
 
 .order_button {
     font-size: 24px;
+    font-family: "Montserrat Alternatives";
+    font-weight: normal;
     padding: 10px 15px;
     background-color: #1a5475;
     border-radius: 15px;
     color: white;
     text-decoration: none;
+    border: none;
+    cursor: pointer;
 }
 
 .order_button:hover {

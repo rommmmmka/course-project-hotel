@@ -32,29 +32,7 @@
 
 {% block script %}
     <script src="{% static 'main/js/register.js' %}"></script>
-    <script>
-        function catchSubmit(e) {
-            if (document.getElementById('passinput1').value !== document.getElementById('passinput2').value) {
-                e.preventDefault();
-                new Toast({
-                title: false,
-                text: 'Пароли не совпадают!',
-                theme: 'danger',
-                autohide: true,
-                interval: 5000,
-            });
-            }
-        }
-    </script>
     {% if register_error == 'True' %}
-        <script>
-            new Toast({
-                title: false,
-                text: 'Пользоатель с таким логином уже существует!',
-                theme: 'danger',
-                autohide: true,
-                interval: 5000,
-            });
-        </script>
+        <script>show_toast('Пользоатель с таким логином уже существует!', 'danger');</script>
     {% endif %}
 {% endblock %}

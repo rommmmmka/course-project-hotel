@@ -89,36 +89,12 @@
         </script>
     {% endif %}
     {% if login_error == 'True' %}
-        <script>
-            new Toast({
-                title: false,
-                text: 'Неправильный логин или пароль!',
-                theme: 'danger',
-                autohide: true,
-                interval: 5000,
-            });
-        </script>
+        <script>show_toast('Неправильный логин или пароль!', 'danger');</script>
     {% endif %}
     {% if register_success == 'True' %}
-        <script>
-            new Toast({
-                title: false,
-                text: 'Регистрация произведена успешно!',
-                theme: 'success',
-                autohide: true,
-                interval: 5000,
-            });
-        </script>
+        <script>show_toast('Регистрация произведена успешно!', 'success');</script>
     {% endif %}
     {% if logout_action == 'True' %}
-        <script>
-            new Toast({
-                title: false,
-                text: 'Вы вышли из аккаунта!',
-                theme: 'warning',
-                autohide: true,
-                interval: 5000,
-            });
-        </script>
+        <script>show_toast('Вы вышли из аккаунта!', 'warning');</script>
     {% endif %}
 {% endblock %}

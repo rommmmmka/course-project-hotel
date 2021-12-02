@@ -66,17 +66,15 @@ def addorder_action(request):
     if not check_if_logged_in(request):
         return logout_action(request)
     if request.method == 'POST':
-        print(request.POST)
         room = room_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['roomclass'])
         days = (to_date(request.POST['checkoutdate']) - to_date(request.POST['checkindate'])).days
-        print(room)
         numberofguests = int(request.POST['numberofguests'])
         roomCost = int(Roomclass.objects.get(roomclassid=request.POST['roomclass']).cost)
-        print(roomCost)
         foodCost = int(Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost)
         addServicesCost = 0
-        for el in request.POST['addservicetypes']:
-            addServicesCost += int(Addservicetype.objects.get(addservicetypeid=el).cost)
+        if 'addservicetypes' in request.POST.keys():
+            for el in request.POST['addservicetypes']:
+                addServicesCost += int(Addservicetype.objects.get(addservicetypeid=el).cost)
         cost = roomCost * days + foodCost * days * numberofguests + addServicesCost * days
 
         orderinfo_obj = Orderinfo(
@@ -98,12 +96,20 @@ def addorder_action(request):
         food_obj = Food(orderid=orderinfo_obj)
         food_obj.foodtypeid_id = request.POST['foodtype']
         food_obj.save()
-        for el in request.POST['addservicetypes']:
-            addservices_obj = Addservices(orderid=orderinfo_obj)
-            addservices_obj.addservicetypeid_id = el
-            addservices_obj.save()
+        if 'addservicetypes' in request.POST.keys():
+            for el in request.POST['addservicetypes']:
+                addservices_obj = Addservices(orderid=orderinfo_obj)
+                addservices_obj.addservicetypeid_id = el
+                addservices_obj.save()
         return redirect_with_get(user_panel, {'addingorder_success': True})
     return redirect(user_panel)
+
+
+def rmorder_action(request):
+    orderstatus_obj = Orderstatus.objects.get(orderid=request.GET['orderid'])
+    orderstatus_obj.orderactive = False
+    orderstatus_obj.save()
+    return redirect_with_get(user_panel, {'removingorder_success': True})
 
 
 def index(request):
@@ -136,19 +142,15 @@ def user_panel(request):
     }).order_by('-checkindate')
     for el in orders:
         print(el)
-    #orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1])).annotate(paymentname=Subquery(orderstatuses.values('paymentname')[:1]))
+    # orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1])).annotate(paymentname=Subquery(orderstatuses.values('paymentname')[:1]))
     return render(request, 'main/user_panel.html', {
         'orders': orders,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
         'currdate': datetime.now().date(),
         'addingorder_success': request.GET.get('addingorder_success'),
+        'removingorder_success': request.GET.get('removingorder_success'),
     })
 
-
-def up_change_password(request):
-    if not check_if_logged_in(request):
-        return logout_action(request)
-    return render(request, 'main/up_change_password.html')
 
 def up_add_order(request):
     if not check_if_logged_in(request):
@@ -163,7 +165,8 @@ def up_add_order(request):
                 'checkoutdate': request.POST['checkoutdate'],
                 'numberofguests': request.POST['numberofguests'],
             })
-        roomclass_list = roomclass_list_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['numberofguests'])
+        roomclass_list = roomclass_list_get(request.POST['checkindate'], request.POST['checkoutdate'],
+                                            request.POST['numberofguests'])
         if len(roomclass_list) == 0:
             return render(request, 'main/up_add_order1.html', {
                 'login': request.COOKIES.get('login'),
@@ -188,3 +191,17 @@ def up_add_order(request):
         'goback': False,
         'error_no_empty_rooms': False,
     })
+
+
+def up_edit_password(request):
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    return render(request, 'main/up_change_password.html')
+
+
+def up_edit_order(request):
+    return 0
+
+
+def up_edit_personal_info(request):
+    return 0

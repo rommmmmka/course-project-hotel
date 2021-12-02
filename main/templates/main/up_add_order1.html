@@ -38,14 +38,6 @@
 
 {% block script %}
     {% if error_no_empty_rooms %}
-        <script>
-            new Toast({
-                title: false,
-                text: 'Свободные комнаты на данные дни отсутствуют! Измените параметры заказа.',
-                theme: 'danger',
-                autohide: true,
-                interval: 7000,
-            });
-        </script>
+        <script>show_toast('Свободные комнаты на данные дни отсутствуют! Измените параметры заказа.', 'danger', 7000);</script>
     {% endif %}
 {% endblock %}

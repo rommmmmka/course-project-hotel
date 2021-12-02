@@ -11,7 +11,7 @@
 
 {% block nav %}
     <span class="nav_info">{{ personal_info.login }}</span>
-    <a href="{% url 'up_change_password' %}" class="nav_button">ИЗМЕНИТЬ ПАРОЛЬ</a>
+    <a href="{% url 'up_edit_password' %}" class="nav_button">ИЗМЕНИТЬ ПАРОЛЬ</a>
     <a href="{% url 'up_add_order' %}" class="nav_button">ЗАБРОНИРОВАТЬ НОМЕР</a>
     <a href="{% url 'logout_action' %}" class="nav_button">ВЫЙТИ</a>
 {% endblock %}
@@ -70,7 +70,18 @@
                         {% endif %}</span>
                 </div>
                 {% if currdate < el.checkindate and el.active %}
-                    <div class="order_button_div"><a href="#" class="order_button">Отменить</a></div>
+                    <div class="order_button_div">
+                        <button class="order_button" onclick="rmorder('{% url 'rmorder_action' %}?orderid={{ el.orderid }}')">Отменить</button>
+                    </div>
+                    <!--
+                    <div class="order_button_div"><a class="order_button" >Отменить</a></div>
+                    <script>
+                        document.getElementById("btncancel_{{ el.orderid }}").document.addEventListener('onclick', function (){
+                            console.log('111');
+                            window.location.href("{% url 'rmorder_action' %}?id={{ el.orderid }}");
+                        });
+
+                    </script>-->
                 {% endif %}
             </div>
             <div class="order_right">
@@ -83,7 +94,9 @@
                     <span class="order_text">{{ el.paymentname }} ({% if el.payed %}оплачен{% else %}неоплачен{% endif %})</span>
                 </div>
                 {% if currdate < el.checkindate and el.active %}
-                    <div class="order_button_div"><a href="#" class="order_button">Отредактировать</a></div>
+                    <div class="order_button_div">
+                        <button class="order_button" onclick="window.location.href='{% url 'up_edit_order' %}?orderid={{ el.orderid }}'">Отредактировать</button>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -91,15 +104,11 @@
 {% endblock %}
 
 {% block script %}
+        <script src="{% static 'main/js/user_panel.js' %}"></script>
     {% if addingorder_success == 'True' %}
-        <script>
-            new Toast({
-                title: false,
-                text: 'Заказ успешно добавлен!',
-                theme: 'success',
-                autohide: true,
-                interval: 5000,
-            });
-        </script>
+        <script>show_toast('Заказ успешно добавлен!', 'success');</script>
+    {% endif %}
+    {% if removingorder_success == 'True' %}
+        <script>show_toast('Заказ успешно отменён!', 'success');</script>
     {% endif %}
 {% endblock %}
