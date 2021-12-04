@@ -110,4 +110,7 @@
     {% if removingorder_success == 'True' %}
         <script>show_toast('Заказ успешно отменён!', 'success');</script>
     {% endif %}
+    {% if editingorder_success == 'True' %}
+        <script>show_toast('Заказ успешно изменён!', 'success');</script>
+    {% endif %}
 {% endblock %}

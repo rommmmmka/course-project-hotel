@@ -97,10 +97,6 @@ header {
     border-bottom: 1px solid black;
 }
 
-.textinput::placeholder {
-    color: #777;
-}
-
 .textinput:focus {
     outline: none;
     border-bottom: 2px solid black;

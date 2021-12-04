@@ -29,6 +29,7 @@ def check_if_logged_in(request):
     obj = Visitor.objects.filter(visitorid=request.COOKIES.get('id'))
     if obj.count() == 0 or obj[0].session != request.COOKIES.get('session') or obj[0].login != request.COOKIES.get('login'):
         return False
+
     return True
 
 

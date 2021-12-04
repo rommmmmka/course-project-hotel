@@ -70,28 +70,20 @@
     font-size: 26px;
 }
 
-
-
-
-
-
-
-.btn {
-    font-size: 26px;
-    padding: 10px 30px 10px;
-}
-
-
-
 .order_title_comment {
     text-align: center;
     font-size: 14px;
 }
 
-.addorder2_block {
+.editorder_block {
     width: 600px;
     margin: 0 auto;
     font-size: 26px;
+}
+
+.btn {
+    font-size: 26px;
+    padding: 10px 30px 10px;
 }
 
 label {

@@ -32,9 +32,38 @@
     </div>
     <div class="roomclass">
         <span class="readonly_comm">Класс номера:</span>
-        <label class="input_disabled"><input type="radio" checked readonly>{{ roomclass }}Ffffff</label>
+        <div class="order_title_comment">(наведите на класс для получения доп. информации)</div>
+        <div class="order_title_comment">(цена указана за одну ночь)</div>
+        <label class="input_disabled" title="{{ room.classcomment }}">
+            <input type="radio" checked readonly>{{ room.classname }} ({{ room.classcost }} руб.)
+        </label>
     </div>
-    <div class="order_title mt10">Тип питания</div>
+    <form action="{% url 'editorder_action' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="orderid" value="{{ orderid }}" readonly>
+        <div class="order_title mt10">Тип питания</div>
+        <div class="order_title_comment">(наведите на тип для получения доп. информации)</div>
+        <div class="order_title_comment">(цена указана за одну ночь на одного человека)</div>
+        <div class="editorder_block">
+            {% for el in foodtype_list %}
+                <label title="{{ el.comment }}"><input type="radio" name="foodtype" value="{{ el.foodtypeid }}" {% if el.foodtypeid == foodtypeid_check %}checked{% endif %} required> {{ el.name }} ({{ el.cost }} руб.)</label>
+            {% endfor %}
+        </div>
+        <div class="order_title mt10">Дополнительные услуги:</div>
+        <div class="order_title_comment">(цена указана за одну ночь)</div>
+        <div class="editorder_block">
+            {% for el in addservicetype_list %}
+                <label><input type="checkbox" name="addservicetypes" value="{{ el.addservicetypeid }}" {% if el.addservicetypeid in addservicetypeid_check %}checked{% endif %}> {{ el.name }} ({{ el.cost }} руб.)</label>
+            {% endfor %}
+        </div>
+        <div class="order_title mt10">Способ оплаты:</div>
+        <div class="editorder_block">
+            {% for el in paymenttype_list %}
+                <label><input type="radio" name="paymenttype" value="{{ el.paymenttypeid }}" {% if el.paymenttypeid == paymenttypeid_check %}checked{% endif %} required> {{ el.name }}</label>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn">Сохранить</button>
+    </form>
 {% endblock %}
 
 {% block script %}

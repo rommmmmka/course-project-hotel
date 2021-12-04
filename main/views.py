@@ -97,7 +97,7 @@ def addorder_action(request):
         food_obj.foodtypeid_id = request.POST['foodtype']
         food_obj.save()
         if 'addservicetypes' in request.POST.keys():
-            for el in request.POST['addservicetypes']:
+            for el in request.POST.getlist('addservicetypes'):
                 addservices_obj = Addservices(orderid=orderinfo_obj)
                 addservices_obj.addservicetypeid_id = el
                 addservices_obj.save()
@@ -115,6 +115,38 @@ def rmorder_action(request):
         return redirect_with_get(user_panel, {'removingorder_success': True, 'select_orderid': request.GET['orderid']})
     except:
         return redirect(user_panel)
+
+
+def editorder_action(request):
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    if request.method == 'POST':
+        orderid = request.POST['orderid']
+        order = Orderinfo.objects.get(orderid=orderid)
+        days = (order.checkoutdate - order.checkindate).days
+        numberofguests = order.numberofguests
+        roomclassid = Room.objects.get(roomid=order.roomid_id).roomclassid_id
+        roomcost = Roomclass.objects.get(roomclassid=roomclassid).cost
+        foodcost = Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost
+        food = Food.objects.get(orderid=orderid)
+        food.foodtypeid_id = request.POST['foodtype']
+        food.save()
+        addservicescost = 0
+        if 'addservicetypes' in request.POST.keys():
+            for el in request.POST.getlist('addservicetypes'):
+                addservicescost += int(Addservicetype.objects.get(addservicetypeid=el).cost)
+                addservices_obj = Addservices()
+                addservices_obj.orderid_id = orderid
+                addservices_obj.addservicetypeid_id = el
+                addservices_obj.save()
+        cost = roomcost * days + foodcost * days * numberofguests + addservicescost * days
+        order.cost = cost
+        order.save()
+        orderstatus = Orderstatus.objects.get(orderid=orderid)
+        orderstatus.paymenttypeid_id = request.POST['paymenttype']
+        orderstatus.save()
+        return redirect_with_get(user_panel, {'editingorder_success': True, 'select_orderid': request.POST['orderid']})
+    return redirect(user_panel)
 
 
 def index(request):
@@ -156,6 +188,7 @@ def user_panel(request):
         'select_ordertype': ordertype,
         'addingorder_success': request.GET.get('addingorder_success'),
         'removingorder_success': request.GET.get('removingorder_success'),
+        'editingorder_success': request.GET.get('editingorder_success'),
     })
 
 
@@ -206,11 +239,32 @@ def up_edit_order(request):
     orderid = request.GET.get('orderid')
     try:
         orderinfo = Orderinfo.objects.get(orderid=orderid)
-        if orderinfo.visitorid.pk != int(request.COOKIES.get('id')) or Orderstatus.objects.get(
+        if orderinfo.visitorid_id != int(request.COOKIES.get('id')) or Orderstatus.objects.get(
                 orderid=orderinfo.orderid).orderactive == 0:
             return redirect('user_panel')
+        checkindate = orderinfo.checkindate
+        checkoutdate = orderinfo.checkoutdate
+        numberofguests = orderinfo.numberofguests
+        days = (checkoutdate - checkindate).days
+        room = Room.objects.filter(roomid=orderinfo.roomid_id).extra(select={
+            'classname': 'SELECT name FROM roomclass WHERE roomclass.roomclassid = room.roomclassid',
+            'classcost': 'SELECT cost FROM roomclass WHERE roomclass.roomclassid = room.roomclassid',
+            'classcomment': 'SELECT comment FROM roomclass WHERE roomclass.roomclassid = room.roomclassid',
+        }).get()
         return render(request, 'main/up_edit_order.html', {
-
+            'login': request.COOKIES.get('login'),
+            'checkindate': str(checkindate),
+            'checkoutdate': str(checkoutdate),
+            'numberofguests': numberofguests,
+            'room': room,
+            'orderid': orderid,
+            'days': days,
+            'foodtype_list': Foodtype.objects.filter(avaliable=True),
+            'foodtypeid_check': Food.objects.get(orderid=orderid).foodtypeid_id,
+            'addservicetype_list': Addservicetype.objects.filter(avaliable=True),
+            'addservicetypeid_check': Addservices.objects.filter(orderid=orderid).values_list('addservicetypeid_id', flat=True),
+            'paymenttype_list': Paymenttype.objects.filter(avaliable=True),
+            'paymenttypeid_check': Orderstatus.objects.get(orderid=orderid).paymenttypeid_id,
         })
     except:
         return redirect('user_panel')
