@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    Редактирование заказа
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/up_edit_order.css' %}">
+{% endblock %}
+
+{% block nav %}
+    <span class="nav_info">{{ login }}</span>
+    <a href="{% url 'user_panel' %}" class="nav_button">В ЛИЧНЫЙ КАБИНЕТ</a>
+{% endblock %}
+
+{% block content %}
+    <div class="title">Редактирование заказа</div>
+    <div class="readonly_dates">
+        <div class="readonly_date">
+            <span class="readonly_comm">Дата заселения:</span>
+            <input type="date" class="dateinput input_disabled" value="{{ checkindate }}" readonly>
+        </div>
+        <div class="readonly_date">
+            <span class="readonly_comm">Дата выселения:</span>
+            <input type="date" class="dateinput input_disabled" value="{{ checkoutdate }}" readonly>
+        </div>
+    </div>
+    <div class="readonly_numberofguests_input_block">
+        <span class="readonly_comm">Количество проживающих:</span>
+        <input type="number" class="textinput readonly_numberofguests_input input_disabled mb15" value="{{ numberofguests }}" readonly>
+    </div>
+    <div class="roomclass">
+        <span class="readonly_comm">Класс номера:</span>
+        <label class="input_disabled"><input type="radio" checked readonly>{{ roomclass }}Ffffff</label>
+    </div>
+    <div class="order_title mt10">Тип питания</div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

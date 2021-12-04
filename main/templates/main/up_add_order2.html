@@ -47,7 +47,7 @@
                 <label title="{{ el.comment }}"><input type="radio" name="roomclass" value="{{ el.roomclassid }}" required> {{ el.name }} ({{ el.cost }} руб.)</label>
             {% endfor %}
         </div>
-        <div class="order_title_mt">Тип питания:</div>
+        <div class="order_title mt10">Тип питания:</div>
         <div class="order_title_comment">(наведите на тип для получения доп. информации)</div>
         <div class="order_title_comment">(цена указана за одну ночь на одного человека)</div>
         <div class="addorder2_block">
@@ -55,14 +55,14 @@
                 <label title="{{ el.comment }}"><input type="radio" name="foodtype" value="{{ el.foodtypeid }}" required> {{ el.name }} ({{ el.cost }} руб.)</label>
             {% endfor %}
         </div>
-        <div class="order_title_mt">Дополнительные услуги:</div>
+        <div class="order_title mt10">Дополнительные услуги:</div>
         <div class="order_title_comment">(цена указана за одну ночь)</div>
         <div class="addorder2_block">
             {% for el in addservicetype_list %}
                 <label><input type="checkbox" name="addservicetypes" value="{{ el.addservicetypeid }}"> {{ el.name }} ({{ el.cost }} руб.)</label>
             {% endfor %}
         </div>
-        <div class="order_title_mt">Способ оплаты:</div>
+        <div class="order_title mt10">Способ оплаты:</div>
         <div class="addorder2_block">
             {% for el in paymenttype_list %}
                 <label><input type="radio" name="paymenttype" value="{{ el.paymenttypeid }}" required> {{ el.name }}</label>

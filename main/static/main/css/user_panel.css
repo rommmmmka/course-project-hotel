@@ -63,7 +63,7 @@
 }
 
 .order_noneditable {
-    height: 144px;
+    height: 148px;
 }
 
 .order_left, .order_right {
@@ -113,6 +113,34 @@
     background-color: #093148;
 }
 
-.order_button_inactive {
+@keyframes anim1 {
+    from {
+        background-color: lightgreen;
+    }
+    50% {
+        background-color: #66a466;
+    }
+    to {
+        background-color: lightgreen;
+    }
+}
 
+@keyframes anim2 {
+    from {
+        background-color: lightcoral;
+    }
+    50% {
+        background-color: #b76060;
+    }
+    to {
+        background-color: lightcoral;
+    }
+}
+
+.anim_active {
+    animation: anim1 2s;
+}
+
+.anim_nonactive {
+    animation: anim2 2s;
 }

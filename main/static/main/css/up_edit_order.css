@@ -1,17 +1,17 @@
-.addorder1_dates {
+.readonly_dates {
     display: flex;
     width: 600px;
     margin: 0 auto 0;
     justify-content: space-between;
 }
 
-.addorder1_date {
+.readonly_date {
     display: flex;
     flex-direction: column;
     text-align: center;
 }
 
-.addorder1_date_comm {
+.readonly_comm {
     font-size: 20px;
     font-weight: bold;
 }
@@ -29,44 +29,24 @@
     max-height: 45px;
 }
 
-.dateinput:focus {
-    outline: none;
-    border-bottom: 1px solid black;
+.readonly_numberofguests_input_block {
+    text-align: center;
+    width: 600px;
+    margin: 20px auto 0;
+}
+
+.readonly_numberofguests_input {
+    font-size: 24px;
 }
 
 .dateinput::-webkit-calendar-picker-indicator {
     opacity: 0;
 }
 
-.addorder1_numberofguests_input_block {
-    width: 600px;
-    margin: 20px auto 0;
-}
-
-.addorder1_numberofguests_input {
-    font-size: 24px;
-}
-
-.btn {
-    font-size: 26px;
-    padding: 10px 30px 10px;
-}
-
 .input_disabled {
+    text-align: left;
     background-color: lightgray;
     cursor: not-allowed;
-}
-
-.nav_form {
-    display: inline;
-}
-
-.nav_button_tag {
-    border: none;
-    height: 39px;
-    font-family: "Montserrat Alternatives";
-    font-size: 16px;
-    cursor: pointer;
 }
 
 .order_title {
@@ -78,6 +58,30 @@
 .mt10 {
     margin-top: 10px;
 }
+
+.mb15 {
+    margin-bottom: 15px;
+}
+
+.roomclass {
+    text-align: center;
+    width: 600px;
+    margin: 0 auto;
+    font-size: 26px;
+}
+
+
+
+
+
+
+
+.btn {
+    font-size: 26px;
+    padding: 10px 30px 10px;
+}
+
+
 
 .order_title_comment {
     text-align: center;

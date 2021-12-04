@@ -5,6 +5,10 @@
     Регистрация
 {% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/register.css' %}">
+{% endblock %}
+
 {% block nav %}
     <a href="{% url 'index' %}?play_login_anim=True" class="nav_button" id="login_button">УЖЕ ЕСТЬ АККАУНТ? ВОЙТИ</a>
 {% endblock %}
@@ -23,7 +27,18 @@
         <div class="form_div">{{ form.lastname }}</div>
         <div class="form_div">{{ form.firstname }}</div>
         <div class="form_div">{{ form.patronymic }}</div>
-        <div class="form_div">{{ form.citizenship }}</div>
+        <div class="form_div">
+            <select name="citizenship" id="citizenship_select" onchange="citizenship_other()" required>
+                <option value="" disabled selected hidden>Гражданство</option>
+                <option value="Беларусь">Беларусь</option>
+                <option value="Россия">Россия</option>
+                <option value="Украина">Украина</option>
+                <option value="Польша">Польша</option>
+                <option value="Литва">Литва</option>
+                <option value="Другое">Другое</option>
+            </select>
+        </div>
+        <div class="form_div" id="citizenship_input"></div>
         <div class="form_div">{{ form.passport }}</div>
         <div class="form_div">{{ form.phonenumber }}</div>
         <button type="submit" class="btn mt10">Зарегистрироваться</button>

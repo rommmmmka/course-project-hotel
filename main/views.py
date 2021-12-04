@@ -13,6 +13,7 @@ TODO
 Хранение в БД времени жизни куки
 Перетащить некоторые функции в модели
 Реализовать смену пароля
+Вывод номера заказа и номера комнаты
 
 
 """
@@ -21,7 +22,6 @@ TODO
 def register_action(request):
     if request.method == 'POST':
         registrationData = request.POST.copy()
-        # loginRepeats = True if len(list(Visitor.objects.raw(f"SELECT * FROM main_visitor WHERE Login = '{registrationData.__getitem__('login')}'"))) == 1 else False
         if check_if_login_repeats(registrationData['login']):
             return redirect_with_get('register', {'register_error': True})
         passwordHashed = str(hashlib.sha256(
@@ -51,7 +51,6 @@ def login_action(request):
             return response
         else:
             return redirect_with_get(index, {'login_error': True})
-
     return redirect('index')
 
 
@@ -59,6 +58,7 @@ def logout_action(request):
     response = redirect_with_get('index', {'logout_action': True})
     response.delete_cookie('id')
     response.delete_cookie('session')
+    response.delete_cookie('login')
     return response
 
 
@@ -76,7 +76,6 @@ def addorder_action(request):
             for el in request.POST['addservicetypes']:
                 addServicesCost += int(Addservicetype.objects.get(addservicetypeid=el).cost)
         cost = roomCost * days + foodCost * days * numberofguests + addServicesCost * days
-
         orderinfo_obj = Orderinfo(
             checkindate=request.POST['checkindate'],
             checkoutdate=request.POST['checkoutdate'],
@@ -86,6 +85,7 @@ def addorder_action(request):
         orderinfo_obj.visitorid_id = request.COOKIES.get('id')
         orderinfo_obj.roomid_id = room[0].roomid
         orderinfo_obj.save()
+        orderid = orderinfo_obj.orderid
         orderstatus_obj = Orderstatus(
             orderid=orderinfo_obj,
             orderactive=True,
@@ -101,15 +101,20 @@ def addorder_action(request):
                 addservices_obj = Addservices(orderid=orderinfo_obj)
                 addservices_obj.addservicetypeid_id = el
                 addservices_obj.save()
-        return redirect_with_get(user_panel, {'addingorder_success': True})
+        return redirect_with_get(user_panel, {'addingorder_success': True, 'select_orderid': orderid})
     return redirect(user_panel)
 
 
 def rmorder_action(request):
-    orderstatus_obj = Orderstatus.objects.get(orderid=request.GET['orderid'])
-    orderstatus_obj.orderactive = False
-    orderstatus_obj.save()
-    return redirect_with_get(user_panel, {'removingorder_success': True})
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    try:
+        orderstatus_obj = Orderstatus.objects.get(orderid=request.GET['orderid'])
+        orderstatus_obj.orderactive = False
+        orderstatus_obj.save()
+        return redirect_with_get(user_panel, {'removingorder_success': True, 'select_orderid': request.GET['orderid']})
+    except:
+        return redirect(user_panel)
 
 
 def index(request):
@@ -134,19 +139,21 @@ def register(request):
 def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    # orderstatuses = Orderstatus.objects.extra(select={"paymentname": "SELECT name FROM paymenttype WHERE orderstatus.PaymentTypeId = paymenttype.PaymentTypeId"})
     orders = Orderinfo.objects.extra(select={
         "active": "SELECT orderactive FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
         "payed": "SELECT orderpayed FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
         "paymentname": "SELECT name FROM paymenttype WHERE paymenttype.PaymentTypeId = (SELECT PaymentTypeId FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId)"
     }).order_by('-checkindate')
-    for el in orders:
-        print(el)
-    # orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).order_by('-checkindate').annotate(active=Subquery(orderstatuses.values('orderactive')[:1])).annotate(payed=Subquery(orderstatuses.values('orderpayed')[:1])).annotate(paymentname=Subquery(orderstatuses.values('paymentname')[:1]))
+    orderid = request.GET.get('select_orderid')
+    ordertype = ''
+    if orderid != None:
+        ordertype = 'active' if Orderstatus.objects.get(orderid=orderid).orderactive == 1 else 'nonactive'
     return render(request, 'main/user_panel.html', {
         'orders': orders,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
         'currdate': datetime.now().date(),
+        'select_orderid': 0 if orderid == None else int(orderid),
+        'select_ordertype': ordertype,
         'addingorder_success': request.GET.get('addingorder_success'),
         'removingorder_success': request.GET.get('removingorder_success'),
     })
@@ -193,15 +200,27 @@ def up_add_order(request):
     })
 
 
-def up_edit_password(request):
+def up_edit_order(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    return render(request, 'main/up_change_password.html')
+    orderid = request.GET.get('orderid')
+    try:
+        orderinfo = Orderinfo.objects.get(orderid=orderid)
+        if orderinfo.visitorid.pk != int(request.COOKIES.get('id')) or Orderstatus.objects.get(
+                orderid=orderinfo.orderid).orderactive == 0:
+            return redirect('user_panel')
+        return render(request, 'main/up_edit_order.html', {
 
-
-def up_edit_order(request):
-    return 0
+        })
+    except:
+        return redirect('user_panel')
 
 
 def up_edit_personal_info(request):
     return 0
+
+
+def up_edit_password(request):
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    return render(request, 'main/up_change_password.html')

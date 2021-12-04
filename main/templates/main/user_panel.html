@@ -50,7 +50,7 @@
         <img src="{% static 'main/images/empty.png' %}" alt="Тут пусто" class="orders_empty">
     {% endif %}
     {% for el in orders %}
-        <div class="order_{% if not el.active %}non{% endif %}active order_{% if currdate < el.checkindate and el.active %}editable{% else %}noneditable{% endif %}">
+        <div class="order_{% if not el.active %}non{% endif %}active order_{% if currdate > el.checkindate or not el.active %}non{% endif %}editable" {% if el.orderid == select_orderid %}id="select"{% endif %}>
             <div class="order_left">
                 <div class="order_left_div">
                     <span class="order_title">Дата заселения:</span>
@@ -73,15 +73,6 @@
                     <div class="order_button_div">
                         <button class="order_button" onclick="rmorder('{% url 'rmorder_action' %}?orderid={{ el.orderid }}')">Отменить</button>
                     </div>
-                    <!--
-                    <div class="order_button_div"><a class="order_button" >Отменить</a></div>
-                    <script>
-                        document.getElementById("btncancel_{{ el.orderid }}").document.addEventListener('onclick', function (){
-                            console.log('111');
-                            window.location.href("{% url 'rmorder_action' %}?id={{ el.orderid }}");
-                        });
-
-                    </script>-->
                 {% endif %}
             </div>
             <div class="order_right">
@@ -104,7 +95,15 @@
 {% endblock %}
 
 {% block script %}
-        <script src="{% static 'main/js/user_panel.js' %}"></script>
+    <script src="{% static 'main/js/user_panel.js' %}"></script>
+    {% if select_orderid != 0 %}
+        <script>
+            document.querySelector('#select').scrollIntoView({
+                behavior: 'smooth'
+            });
+            playanim_{{ select_ordertype }}();
+        </script>
+    {% endif %}
     {% if addingorder_success == 'True' %}
         <script>show_toast('Заказ успешно добавлен!', 'success');</script>
     {% endif %}
