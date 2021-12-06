@@ -1,4 +1,4 @@
-import random
+import random, hashlib
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.shortcuts import redirect
@@ -22,12 +22,13 @@ def redirect_with_get(url, query):
 
 
 def check_if_login_repeats(login):
-    return True if Visitor.objects.filter(login=login).count() == 1 else False #сделать по-человечески
+    return True if Visitor.objects.filter(login=login).count() == 1 else False  # сделать по-человечески
 
 
 def check_if_logged_in(request):
     obj = Visitor.objects.filter(visitorid=request.COOKIES.get('id'))
-    if obj.count() == 0 or obj[0].session != request.COOKIES.get('session') or obj[0].login != request.COOKIES.get('login'):
+    if obj.count() == 0 or obj[0].session != request.COOKIES.get('session') or obj[0].login != request.COOKIES.get(
+            'login'):
         return False
 
     return True
@@ -43,3 +44,7 @@ def room_get(checkindate, checkoutdate, roomclassid):
 
 def to_date(str):
     return datetime.strptime(str, "%Y-%m-%d")
+
+
+def hash(string):
+    return str(hashlib.sha256(str(string + '4lmAIQg0eRvU').encode('utf-8')).hexdigest())

@@ -80,7 +80,7 @@
 
 {% block script %}
     <script src="{% static 'main/js/index.js' %}"></script>
-    {% if play_login_anim == 'True' %}
+    {% if play_login_anim == 'True' or login_error == 'True' %}
         <script>
             document.querySelector('#login').scrollIntoView({
                 behavior: 'smooth'

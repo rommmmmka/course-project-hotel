@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 from .utils import *
-import hashlib
 from datetime import datetime, timedelta
 from django.db import connection
 
@@ -24,9 +23,7 @@ def register_action(request):
         registrationData = request.POST.copy()
         if check_if_login_repeats(registrationData['login']):
             return redirect_with_get('register', {'register_error': True})
-        passwordHashed = str(hashlib.sha256(
-            str(registrationData['login'] + registrationData['passwordhash'] + '4lmAIQg0eRvU').encode(
-                'utf-8')).hexdigest())  # random salt
+        passwordHashed = hash(registrationData['login'] + registrationData['passwordhash'])
         registrationData['passwordhash'] = passwordHashed
         RegisterForm(registrationData).save()
         return redirect_with_get('index', {'register_success': True})
@@ -36,8 +33,7 @@ def register_action(request):
 def login_action(request):
     if request.method == 'POST':
         login = request.POST['login']
-        passwordHashed = str(hashlib.sha256(
-            str(login + request.POST['password'] + '4lmAIQg0eRvU').encode('utf-8')).hexdigest())  # random salt
+        passwordHashed = hash(login + request.POST['password'])
         if check_if_login_repeats(login) and Visitor.objects.get(login=login).passwordhash == passwordHashed:
             session = salt_generator(32)
             obj = Visitor.objects.get(login=login)
@@ -149,6 +145,23 @@ def editorder_action(request):
     return redirect(user_panel)
 
 
+def editpassword_action(request):
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    login = request.COOKIES.get('login')
+    oldpass = hash(login + request.POST['password_old'])
+    if check_if_login_repeats(login):
+        visitor = Visitor.objects.get(login=login)
+        if visitor.passwordhash == oldpass:
+            newpass = hash(login + request.POST['password_new'])
+            visitor.passwordhash = newpass
+            visitor.save()
+            print('1111')
+            return redirect_with_get('user_panel', {'editingpassword_success': True})
+        return redirect_with_get('up_edit_password', {'wrongpassword_error': True})
+    return redirect('up_edit_password')
+
+
 def index(request):
     form = LoginForm()
     return render(request, 'main/index.html', {
@@ -180,6 +193,7 @@ def user_panel(request):
     ordertype = ''
     if orderid != None:
         ordertype = 'active' if Orderstatus.objects.get(orderid=orderid).orderactive == 1 else 'nonactive'
+    print(request.GET.get('editingpassword_success'))
     return render(request, 'main/user_panel.html', {
         'orders': orders,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
@@ -189,6 +203,7 @@ def user_panel(request):
         'addingorder_success': request.GET.get('addingorder_success'),
         'removingorder_success': request.GET.get('removingorder_success'),
         'editingorder_success': request.GET.get('editingorder_success'),
+        'editingpassword_success': request.GET.get('editingpassword_success'),
     })
 
 
@@ -258,11 +273,11 @@ def up_edit_order(request):
             'numberofguests': numberofguests,
             'room': room,
             'orderid': orderid,
-            'days': days,
             'foodtype_list': Foodtype.objects.filter(avaliable=True),
             'foodtypeid_check': Food.objects.get(orderid=orderid).foodtypeid_id,
             'addservicetype_list': Addservicetype.objects.filter(avaliable=True),
-            'addservicetypeid_check': Addservices.objects.filter(orderid=orderid).values_list('addservicetypeid_id', flat=True),
+            'addservicetypeid_check': Addservices.objects.filter(orderid=orderid).values_list('addservicetypeid_id',
+                                                                                              flat=True),
             'paymenttype_list': Paymenttype.objects.filter(avaliable=True),
             'paymenttypeid_check': Orderstatus.objects.get(orderid=orderid).paymenttypeid_id,
         })
@@ -270,11 +285,16 @@ def up_edit_order(request):
         return redirect('user_panel')
 
 
-def up_edit_personal_info(request):
-    return 0
-
-
 def up_edit_password(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    return render(request, 'main/up_change_password.html')
+    return render(request, 'main/up_edit_password.html', {
+        'login': request.COOKIES.get('login'),
+        'wrongpassword_error': request.GET.get('wrongpassword_error'),
+    })
+
+
+def up_edit_personal_info(request):
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    return 0

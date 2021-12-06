@@ -9,7 +9,8 @@ class DateInput(DateInput):
 class RegisterForm(ModelForm):
     class Meta:
         model = Visitor
-        fields = ["login", "passwordhash", "lastname", "firstname", "patronymic", "citizenship", "passport", "phonenumber"]
+        fields = ["login", "passwordhash", "lastname", "firstname", "patronymic", "citizenship", "passport",
+                  "phonenumber"]
         widgets = {
             "login": TextInput(attrs={
                 'placeholder': 'Логин',
