@@ -96,3 +96,7 @@
 .anim {
     animation: anim1 2s;
 }
+
+iframe {
+    margin-left: 50px;
+}

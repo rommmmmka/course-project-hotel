@@ -21,11 +21,11 @@
         <div class="addorder1_dates">
             <div class="addorder1_date">
                 <span class="addorder1_date_comm">Дата заселения:</span>
-                <input type="date" class="dateinput" name="checkindate" {% if goback %}value="{{ checkindate }}" {% endif %}required>
+                <input type="date" class="dateinput" id="checkindate" name="checkindate" {% if goback %}value="{{ checkindate }}" {% endif %}required>
             </div>
             <div class="addorder1_date">
                 <span class="addorder1_date_comm">Дата выселения:</span>
-                <input type="date" class="dateinput" name="checkoutdate" {% if goback %}value="{{ checkoutdate }}" {% endif %}required>
+                <input type="date" class="dateinput" id="checkoutdate" name="checkoutdate" {% if goback %}value="{{ checkoutdate }}" {% endif %}required>
             </div>
         </div>
         <div class="addorder1_numberofguests_input_block">
@@ -37,6 +37,7 @@
 {% endblock %}
 
 {% block script %}
+    <script src="{% static 'main/js/add_order.js' %}"></script>
     {% if error_no_empty_rooms %}
         <script>show_toast('Свободные комнаты на данные дни отсутствуют! Измените параметры заказа.', 'danger', 7000);</script>
     {% endif %}

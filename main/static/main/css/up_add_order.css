@@ -61,14 +61,6 @@
     display: inline;
 }
 
-.nav_button_tag {
-    border: none;
-    height: 39px;
-    font-family: "Montserrat Alternatives";
-    font-size: 16px;
-    cursor: pointer;
-}
-
 .order_title {
     text-align: center;
     font-size: 30px;
@@ -93,4 +85,11 @@
 label {
     display: block;
     margin-top: 5px;
+}
+
+.buttonbox {
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+    margin: 15px auto 0;
 }

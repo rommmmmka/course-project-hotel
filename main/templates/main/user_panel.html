@@ -18,7 +18,7 @@
 
 {% block content %}
     <div class="title">
-        Личная информация
+        Личные данные
     </div>
     <div class="personalinfo_block">
         <div class="personalinfo">
@@ -40,7 +40,7 @@
             <span class="personalinfo_left">Номер телефона: </span><span class="personalinfo_right">{{ personal_info.phonenumber }}</span>
         </div>
         <div class="personalinfo_button">
-            <a href="#" class="personalinfo_button_a">Отредактировать информацию</a>
+            <a href="{% url 'up_edit_personal_info' %}" class="personalinfo_button_a">Отредактировать информацию</a>
         </div>
     </div>
     <div class="title">
@@ -53,6 +53,8 @@
         <div class="order_{% if not el.active %}non{% endif %}active order_{% if currdate > el.checkindate or not el.active %}non{% endif %}editable" {% if el.orderid == select_orderid %}id="select"{% endif %}>
             <div class="order_left">
                 <div class="order_left_div">
+                    <span class="order_title">ID заказа:</span>
+                    <span class="order_text">{{ el.orderid }}</span>
                     <span class="order_title">Дата заселения:</span>
                     <span class="order_text">{{ el.checkindate }}</span>
                     <span class="order_title">Дата выселения:</span>
@@ -77,10 +79,12 @@
             </div>
             <div class="order_right">
                 <div class="order_right_div">
+                    <span class="order_title">Номер комнаты:</span>
+                    <span class="order_text">{{ el.roomnumber }}</span>
                     <span class="order_title">Количество посетилелей:</span>
                     <span class="order_text">{{ el.numberofguests }}</span>
                     <span class="order_title">Стоимость проживания:</span>
-                    <span class="order_text">{{ el.cost }}</span>
+                    <span class="order_text">{{ el.cost }} BYN</span>
                     <span class="order_title">Статус оплаты:</span>
                     <span class="order_text">{{ el.paymentname }} ({% if el.payed %}оплачен{% else %}неоплачен{% endif %})</span>
                 </div>
@@ -115,5 +119,8 @@
     {% endif %}
     {% if editingpassword_success == 'True' %}
         <script>show_toast('Пароль успешно изменён!', 'success');</script>
+    {% endif %}
+    {% if editingpersonalinfo_success == 'True' %}
+        <script>show_toast('Личные данные успешно изменены!', 'success');</script>
     {% endif %}
 {% endblock %}

@@ -138,3 +138,20 @@ header {
 .mt10 {
     margin-top: 10px
 }
+
+select {
+    font-family: "Montserrat Alternatives";
+    font-size: 36px;
+    width: 800px;
+    margin: 0 auto 20px;
+    border: 0;
+    border-bottom: 1px solid black;
+    background-color: white;
+    cursor: pointer;
+}
+
+.citizenshipinput {
+    display: block;
+    width: 750px;
+    margin: 0 auto 20px;
+}

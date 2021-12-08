@@ -1,19 +1,18 @@
-from django.db.models import Subquery, OuterRef
-from django.shortcuts import render, redirect
-from .models import *
-from .forms import *
+from django.shortcuts import render
 from .utils import *
-from datetime import datetime, timedelta
-from django.db import connection
+from .forms import *
+from datetime import datetime
 
 """
 TODO
 Случайная соль для каждого пользователя
 Хранение в БД времени жизни куки
 Перетащить некоторые функции в модели
-Реализовать смену пароля
 Вывод номера заказа и номера комнаты
-
+JS счётчик в добавлении/редактировании заказа
+JS ограничение на date input
+заменить try-except на нормальный if
+История заказов добавить фильтр
 
 """
 
@@ -156,10 +155,25 @@ def editpassword_action(request):
             newpass = hash(login + request.POST['password_new'])
             visitor.passwordhash = newpass
             visitor.save()
-            print('1111')
             return redirect_with_get('user_panel', {'editingpassword_success': True})
         return redirect_with_get('up_edit_password', {'wrongpassword_error': True})
     return redirect('up_edit_password')
+
+
+def editpersonalinfo_action(request):
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    if request.method == 'POST':
+        visitor = Visitor.objects.get(visitorid=request.COOKIES.get('id'))
+        print(request.POST)
+        visitor.lastname = request.POST['lastname']
+        visitor.firstname = request.POST['firstname']
+        visitor.patronymic = request.POST['patronymic']
+        visitor.citizenship = request.POST['citizenship']
+        visitor.passport = request.POST['passport']
+        visitor.phonenumber = request.POST['phonenumber']
+        visitor.save()
+    return redirect_with_get('user_panel', {'editingpersonalinfo_success': True})
 
 
 def index(request):
@@ -184,16 +198,16 @@ def register(request):
 def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    orders = Orderinfo.objects.extra(select={
+    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).extra(select={
         "active": "SELECT orderactive FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
         "payed": "SELECT orderpayed FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
-        "paymentname": "SELECT name FROM paymenttype WHERE paymenttype.PaymentTypeId = (SELECT PaymentTypeId FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId)"
+        "paymentname": "SELECT name FROM paymenttype WHERE paymenttype.PaymentTypeId = (SELECT PaymentTypeId FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId)",
+        "roomnumber": "SELECT roomnumber FROM room WHERE room.roomid = orderinfo.roomid",
     }).order_by('-checkindate')
     orderid = request.GET.get('select_orderid')
     ordertype = ''
     if orderid != None:
         ordertype = 'active' if Orderstatus.objects.get(orderid=orderid).orderactive == 1 else 'nonactive'
-    print(request.GET.get('editingpassword_success'))
     return render(request, 'main/user_panel.html', {
         'orders': orders,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
@@ -204,6 +218,7 @@ def user_panel(request):
         'removingorder_success': request.GET.get('removingorder_success'),
         'editingorder_success': request.GET.get('editingorder_success'),
         'editingpassword_success': request.GET.get('editingpassword_success'),
+        'editingpersonalinfo_success': request.GET.get('editingpersonalinfo_success'),
     })
 
 
@@ -297,4 +312,13 @@ def up_edit_password(request):
 def up_edit_personal_info(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    return 0
+    personalinfo = Visitor.objects.get(visitorid=request.COOKIES.get('id'))
+    citizenship_select = False
+    if personalinfo.citizenship in ['Беларусь', 'Россия', 'Украина', 'Польша', 'Литва']:
+        citizenship_select = True
+
+    return render(request, 'main/up_edit_personal_info.html', {
+        'login': request.COOKIES.get('login'),
+        'personalinfo': personalinfo,
+        'citizenship_select': citizenship_select,
+    })

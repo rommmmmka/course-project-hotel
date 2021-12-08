@@ -5,10 +5,6 @@
     Регистрация
 {% endblock %}
 
-{% block css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/register.css' %}">
-{% endblock %}
-
 {% block nav %}
     <a href="{% url 'index' %}?play_login_anim=True" class="nav_button" id="login_button">УЖЕ ЕСТЬ АККАУНТ? ВОЙТИ</a>
 {% endblock %}
@@ -47,6 +43,7 @@
 
 {% block script %}
     <script src="{% static 'main/js/register.js' %}"></script>
+    <script src="{% static 'main/js/citizenship_other.js' %}"></script>
     {% if register_error == 'True' %}
         <script>show_toast('Пользоатель с таким логином уже существует!', 'danger');</script>
     {% endif %}

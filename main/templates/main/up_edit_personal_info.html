@@ -1,0 +1,54 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    Изменить личные данные
+{% endblock %}
+
+{% block nav %}
+    <span class="nav_info">{{ login }}</span>
+    <a href="{% url 'user_panel' %}" class="nav_button">В ЛИЧНЫЙ КАБИНЕТ</a>
+{% endblock %}
+
+{% block content %}
+    <div class="title">Изменить личные данные</div>
+    <form action="{% url 'editpersonalinfo_action' %}" method="post">
+        {% csrf_token %}
+        <div class="form_div">
+            <input type="text" name="lastname" placeholder="Фамилия" class="textinput" maxlength="30" value="{{ personalinfo.lastname }}" required>
+        </div>
+        <div class="form_div">
+            <input type="text" name="firstname" placeholder="Имя" class="textinput" maxlength="30" value="{{ personalinfo.firstname }}" required>
+        </div>
+        <div class="form_div">
+            <input type="text" name="patronymic" placeholder="Отчество" class="textinput" maxlength="30" value="{{ personalinfo.patronymic }}" required>
+        </div>
+        <div class="form_div">
+            <select name="citizenship{% if not citizenship_select %}1{% endif %}" id="citizenship_select" onchange="citizenship_other()" {% if citizenship_select %}required{% endif %}>
+                <option value="" disabled hidden>Гражданство</option>
+                <option value="Беларусь" {% if personalinfo.citizenship == 'Беларусь' %}selected{% endif %}>Беларусь</option>
+                <option value="Россия" {% if personalinfo.citizenship == 'Россия' %}selected{% endif %}>Россия</option>
+                <option value="Украина" {% if personalinfo.citizenship == 'Украина' %}selected{% endif %}>Украина</option>
+                <option value="Польша" {% if personalinfo.citizenship == 'Польша' %}selected{% endif %}>Польша</option>
+                <option value="Литва" {% if personalinfo.citizenship == 'Литва' %}selected{% endif %}>Литва</option>
+                <option value="Другое" {% if not citizenship_select %}selected{% endif %}>Другое</option>
+            </select>
+        </div>
+        <div class="form_div" id="citizenship_input">
+            {% if not citizenship_select %}
+                <input type="text" name="citizenship" placeholder="Гражданство" class="textinput citizenshipinput" maxlength="30" value="{{ personalinfo.citizenship }}" required>
+            {% endif %}
+        </div>
+        <div class="form_div">
+            <input type="text" name="passport" placeholder="Серия и номер паспорта" class="textinput" maxlength="15" value="{{ personalinfo.passport }}" required>
+        </div>
+        <div class="form_div">
+            <input type="text" name="phonenumber" placeholder="Номер телефона" class="textinput" maxlength="19" id="phonenumber" value="{{ personalinfo.phonenumber }}" required>
+        </div>
+        <button type="submit" class="btn mt10">Сохранить изменения</button>
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'main/js/citizenship_other.js' %}"></script>
+{% endblock %}

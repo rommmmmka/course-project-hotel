@@ -59,11 +59,7 @@
 }
 
 .order_editable {
-    height: 213px;
-}
-
-.order_noneditable {
-    height: 148px;
+    height: 260px;
 }
 
 .order_left, .order_right {

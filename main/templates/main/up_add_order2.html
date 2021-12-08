@@ -12,19 +12,19 @@
 {% block nav %}
     <span class="nav_info">{{ login }}</span>
     <a href="{% url 'user_panel' %}" class="nav_button">В ЛИЧНЫЙ КАБИНЕТ</a>
-    <form action="{% url 'up_add_order' %}" method="post" class="nav_form">
+
+{% endblock %}
+
+{% block content %}
+    <form id="form_goback" action="{% url 'up_add_order' %}" method="post" class="nav_form">
         {% csrf_token %}
         <input type="hidden" name="checkindate" value="{{ checkindate }}">
         <input type="hidden" name="checkoutdate" value="{{ checkoutdate }}">
         <input type="hidden" name="numberofguests" value="{{ numberofguests }}">
         <input type="hidden" name="goback" value="True">
-        <button type="submit" class="nav_button nav_button_tag">НАЗАД</button>
     </form>
-{% endblock %}
-
-{% block content %}
     <div class="title">Бронирование номера</div>
-    <form action="{% url 'addorder_action' %}" method="post">
+    <form id="form_add" action="{% url 'addorder_action' %}" method="post">
         {% csrf_token %}
         <div class="addorder1_dates">
             <div class="addorder1_date">
@@ -68,6 +68,10 @@
                 <label><input type="radio" name="paymenttype" value="{{ el.paymenttypeid }}" required> {{ el.name }}</label>
             {% endfor %}
         </div>
-        <button type="submit" class="btn">Далее</button>
     </form>
+    <div class="buttonbox">
+        <button type="submit" form="form_goback" class="btn">Назад</button>
+        <button type="submit" form="form_add" class="btn">Далее</button>
+    </div>
+
 {% endblock %}
