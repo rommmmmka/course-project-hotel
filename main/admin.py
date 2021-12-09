@@ -8,13 +8,17 @@ class VisitorAdmin(admin.ModelAdmin):
 
 
 class OrderInfoAdmin(admin.ModelAdmin):
-    list_display = ('orderid', 'checkindate', 'checkoutdate', 'numberofguests', 'cost')
+    list_display = ('orderid', 'roomid', 'checkindate', 'checkoutdate', 'numberofguests', 'cost')
     list_filter = (['numberofguests'])
 
 
 class FoodTypesAdmin(admin.ModelAdmin):
     list_display = ('foodtypeid', 'name', 'cost', 'avaliable', 'comment')
     list_filter = (['avaliable'])
+
+
+class FoodAdmin(admin.ModelAdmin):
+    list_display = ('foodid', 'orderid', 'foodtypeid')
 
 
 class OrderStatusAdmin(admin.ModelAdmin):
@@ -28,7 +32,7 @@ class PaymentTypeAdmin(admin.ModelAdmin):
 
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('roomid', 'roomnumber', 'avaliable')
+    list_display = ('roomid', 'roomclassid', 'roomnumber', 'avaliable')
     list_filter = (['avaliable'])
 
 
@@ -41,14 +45,17 @@ class AddServiceTypeAdmin(admin.ModelAdmin):
     list_display = ('addservicetypeid', 'name', 'cost', 'avaliable')
     list_filter = (['avaliable'])
 
+class AddServicesAdmin(admin.ModelAdmin):
+    list_display = ('addservicesid', 'orderid', 'addservicetypeid')
+
 
 admin.site.register(Visitor, VisitorAdmin)
 admin.site.register(Orderinfo, OrderInfoAdmin)
-admin.site.register(Food)
 admin.site.register(Foodtype, FoodTypesAdmin)
+admin.site.register(Food, FoodAdmin)
 admin.site.register(Orderstatus, OrderStatusAdmin)
 admin.site.register(Paymenttype, PaymentTypeAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(Roomclass, RoomClassAdmin)
-admin.site.register(Addservices)
+admin.site.register(Addservices, AddServicesAdmin)
 admin.site.register(Addservicetype, AddServiceTypeAdmin)

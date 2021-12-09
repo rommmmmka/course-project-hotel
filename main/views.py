@@ -5,14 +5,9 @@ from datetime import datetime
 
 """
 TODO
-Случайная соль для каждого пользователя
 Хранение в БД времени жизни куки
 Перетащить некоторые функции в модели
-Вывод номера заказа и номера комнаты
 JS счётчик в добавлении/редактировании заказа
-JS ограничение на date input
-заменить try-except на нормальный if
-История заказов добавить фильтр
 
 """
 
@@ -103,13 +98,12 @@ def addorder_action(request):
 def rmorder_action(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    try:
+    if Orderstatus.objects.filter(orderid=request.GET['orderid']).count() == 1:
         orderstatus_obj = Orderstatus.objects.get(orderid=request.GET['orderid'])
         orderstatus_obj.orderactive = False
         orderstatus_obj.save()
         return redirect_with_get(user_panel, {'removingorder_success': True, 'select_orderid': request.GET['orderid']})
-    except:
-        return redirect(user_panel)
+    return redirect(user_panel)
 
 
 def editorder_action(request):
@@ -235,8 +229,7 @@ def up_add_order(request):
                 'checkoutdate': request.POST['checkoutdate'],
                 'numberofguests': request.POST['numberofguests'],
             })
-        roomclass_list = roomclass_list_get(request.POST['checkindate'], request.POST['checkoutdate'],
-                                            request.POST['numberofguests'])
+        roomclass_list = roomclass_list_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['numberofguests'])
         if len(roomclass_list) == 0:
             return render(request, 'main/up_add_order1.html', {
                 'login': request.COOKIES.get('login'),
@@ -267,7 +260,7 @@ def up_edit_order(request):
     if not check_if_logged_in(request):
         return logout_action(request)
     orderid = request.GET.get('orderid')
-    try:
+    if Orderinfo.objects.filter(orderid=orderid).count() == 1:
         orderinfo = Orderinfo.objects.get(orderid=orderid)
         if orderinfo.visitorid_id != int(request.COOKIES.get('id')) or Orderstatus.objects.get(
                 orderid=orderinfo.orderid).orderactive == 0:
@@ -291,13 +284,11 @@ def up_edit_order(request):
             'foodtype_list': Foodtype.objects.filter(avaliable=True),
             'foodtypeid_check': Food.objects.get(orderid=orderid).foodtypeid_id,
             'addservicetype_list': Addservicetype.objects.filter(avaliable=True),
-            'addservicetypeid_check': Addservices.objects.filter(orderid=orderid).values_list('addservicetypeid_id',
-                                                                                              flat=True),
+            'addservicetypeid_check': Addservices.objects.filter(orderid=orderid).values_list('addservicetypeid_id', flat=True),
             'paymenttype_list': Paymenttype.objects.filter(avaliable=True),
             'paymenttypeid_check': Orderstatus.objects.get(orderid=orderid).paymenttypeid_id,
         })
-    except:
-        return redirect('user_panel')
+    return redirect('user_panel')
 
 
 def up_edit_password(request):
@@ -316,7 +307,6 @@ def up_edit_personal_info(request):
     citizenship_select = False
     if personalinfo.citizenship in ['Беларусь', 'Россия', 'Украина', 'Польша', 'Литва']:
         citizenship_select = True
-
     return render(request, 'main/up_edit_personal_info.html', {
         'login': request.COOKIES.get('login'),
         'personalinfo': personalinfo,

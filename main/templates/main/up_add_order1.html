@@ -38,6 +38,12 @@
 
 {% block script %}
     <script src="{% static 'main/js/add_order.js' %}"></script>
+    {% if goback %}
+        <script>
+            changeCheckIn();
+            changeCheckOut();
+        </script>
+    {% endif %}
     {% if error_no_empty_rooms %}
         <script>show_toast('Свободные комнаты на данные дни отсутствуют! Измените параметры заказа.', 'danger', 7000);</script>
     {% endif %}
