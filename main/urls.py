@@ -12,6 +12,7 @@ urlpatterns = [
     path('action/order/edit', views.editorder_action, name="editorder_action"),
     path('action/password/edit', views.editpassword_action, name="editpassword_action"),
     path('action/personal_info/edit', views.editpersonalinfo_action, name="editpersonalinfo_action"),
+    path('action/change_order_by', views.changeorderby_action, name="changeorderby_action"),
     path('user_panel', views.user_panel, name="user_panel"),
     path('user_panel/order/add', views.up_add_order, name="up_add_order"),
     path('user_panel/order/edit', views.up_edit_order, name="up_edit_order"),

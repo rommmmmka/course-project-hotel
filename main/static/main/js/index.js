@@ -1,6 +1,6 @@
-var login_el = document.getElementById('login');
-var emptyspace_el = document.getElementById('emptyspace');
-var input_els = document.getElementsByClassName('textinput');
+let login_el = document.getElementById('login');
+let emptyspace_el = document.getElementById('emptyspace');
+let input_els = document.getElementsByClassName('textinput');
 login_el.addEventListener('animationend', endanim);
 
 $('a[href^="#"]').click(function () {

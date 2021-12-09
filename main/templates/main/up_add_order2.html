@@ -24,7 +24,7 @@
         <input type="hidden" name="goback" value="True">
     </form>
     <div class="title">Бронирование номера</div>
-    <form id="form_add" action="{% url 'addorder_action' %}" method="post">
+    <form onsubmit="return catchSubmit(event)" id="form_add" action="{% url 'addorder_action' %}" method="post">
         {% csrf_token %}
         <div class="addorder1_dates">
             <div class="addorder1_date">
@@ -73,5 +73,15 @@
         <button type="submit" form="form_goback" class="btn">Назад</button>
         <button type="submit" form="form_add" class="btn">Далее</button>
     </div>
+{% endblock %}
 
+{% block script %}
+    <script>
+        const room_costs = [{% for el in roomclass_list %}{{ el.cost }}, {% endfor %}];
+        const food_costs = [{% for el in foodtype_list %}{{ el.cost }}, {% endfor %}];
+        const addservices_costs = [{% for el in addservicetype_list %}{{ el.cost }}, {% endfor %}];
+        const days = {{ days }};
+        const guests = {{ numberofguests }};
+    </script>
+    <script src="{% static 'main/js/add_order2.js' %}"></script>
 {% endblock %}

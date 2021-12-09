@@ -140,3 +140,8 @@
 .anim_nonactive {
     animation: anim2 2s;
 }
+
+.orderby_button {
+    margin: 0 auto 20px;
+    text-align: center;
+}

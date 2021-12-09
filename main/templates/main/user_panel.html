@@ -46,8 +46,18 @@
     <div class="title">
         История заказов
     </div>
-    {% if not orders.exists %}
+    {% if not orders_exist %}
         <img src="{% static 'main/images/empty.png' %}" alt="Тут пусто" class="orders_empty">
+    {% else %}
+        <div class="orderby_button">
+            <a href="{% url 'changeorderby_action' %}" class="personalinfo_button_a">
+                {% if order_by == 1 %}
+                    Сортировка: по номеру заказа
+                {% else %}
+                    Сортировка: по дате заселения
+                {% endif %}
+            </a>
+        </div>
     {% endif %}
     {% for el in orders %}
         <div class="order_{% if not el.active %}non{% endif %}active order_{% if currdate > el.checkindate or not el.active %}non{% endif %}editable" {% if el.orderid == select_orderid %}id="select"{% endif %}>

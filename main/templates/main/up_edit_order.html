@@ -38,7 +38,7 @@
             <input type="radio" checked readonly>{{ room.classname }} ({{ room.classcost }} руб.)
         </label>
     </div>
-    <form action="{% url 'editorder_action' %}" method="post">
+    <form onsubmit="return catchSubmit(event)" action="{% url 'editorder_action' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="orderid" value="{{ orderid }}" readonly>
         <div class="order_title mt10">Тип питания</div>
@@ -64,4 +64,15 @@
         </div>
         <button type="submit" class="btn">Сохранить</button>
     </form>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const room_cost = {{ room.classcost }};
+        const food_costs = [{% for el in foodtype_list %}{{ el.cost }}, {% endfor %}];
+        const addservices_costs = [{% for el in addservicetype_list %}{{ el.cost }}, {% endfor %}];
+        const days = {{ days }};
+        const guests = {{ numberofguests }};
+    </script>
+    <script src="{% static 'main/js/edit_order.js' %}"></script>
 {% endblock %}

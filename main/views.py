@@ -5,10 +5,6 @@ from datetime import datetime
 
 """
 TODO
-Хранение в БД времени жизни куки
-Перетащить некоторые функции в модели
-JS счётчик в добавлении/редактировании заказа
-
 """
 
 
@@ -49,6 +45,7 @@ def logout_action(request):
     response.delete_cookie('id')
     response.delete_cookie('session')
     response.delete_cookie('login')
+    response.delete_cookie('order_by')
     return response
 
 
@@ -63,7 +60,7 @@ def addorder_action(request):
         foodCost = int(Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost)
         addServicesCost = 0
         if 'addservicetypes' in request.POST.keys():
-            for el in request.POST['addservicetypes']:
+            for el in request.POST.getlist('addservicetypes'):
                 addServicesCost += int(Addservicetype.objects.get(addservicetypeid=el).cost)
         cost = roomCost * days + foodCost * days * numberofguests + addServicesCost * days
         orderinfo_obj = Orderinfo(
@@ -169,6 +166,16 @@ def editpersonalinfo_action(request):
         visitor.save()
     return redirect_with_get('user_panel', {'editingpersonalinfo_success': True})
 
+def changeorderby_action(request):
+    if not check_if_logged_in(request):
+        return logout_action(request)
+    response = redirect('user_panel')
+    if request.COOKIES.get('order_by') is None:
+        response.set_cookie('order_by', 1, max_age=3600)
+    else:
+        response.delete_cookie('order_by')
+    return response
+
 
 def index(request):
     form = LoginForm()
@@ -192,22 +199,26 @@ def register(request):
 def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).extra(select={
-        "active": "SELECT orderactive FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
-        "payed": "SELECT orderpayed FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
-        "paymentname": "SELECT name FROM paymenttype WHERE paymenttype.PaymentTypeId = (SELECT PaymentTypeId FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId)",
-        "roomnumber": "SELECT roomnumber FROM room WHERE room.roomid = orderinfo.roomid",
-    }).order_by('-checkindate')
+    # orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).extra(select={
+    #     "active": "SELECT orderactive FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
+    #     "payed": "SELECT orderpayed FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
+    #     "paymentname": "SELECT name FROM paymenttype WHERE paymenttype.PaymentTypeId = (SELECT PaymentTypeId FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId)",
+    #     "roomnumber": "SELECT roomnumber FROM room WHERE room.roomid = orderinfo.roomid",
+    # }).order_by('-checkindate')
+    orders = Orderinfo.objects.raw("CALL get_orders(%s, %s);", [request.COOKIES.get('id'), 1 if request.COOKIES.get('order_by') is None else 2])
+
     orderid = request.GET.get('select_orderid')
     ordertype = ''
-    if orderid != None:
+    if orderid is not None:
         ordertype = 'active' if Orderstatus.objects.get(orderid=orderid).orderactive == 1 else 'nonactive'
     return render(request, 'main/user_panel.html', {
         'orders': orders,
+        'orders_exist': True if len(orders) != 0 else False,
         'personal_info': Visitor.objects.get(visitorid=request.COOKIES.get('id')),
         'currdate': datetime.now().date(),
-        'select_orderid': 0 if orderid == None else int(orderid),
+        'select_orderid': 0 if orderid is None else int(orderid),
         'select_ordertype': ordertype,
+        'order_by': 1 if request.COOKIES.get('order_by') == '1' else 2,
         'addingorder_success': request.GET.get('addingorder_success'),
         'removingorder_success': request.GET.get('removingorder_success'),
         'editingorder_success': request.GET.get('editingorder_success'),
@@ -220,29 +231,32 @@ def up_add_order(request):
     if not check_if_logged_in(request):
         return logout_action(request)
     if request.method == 'POST':
+        checkindate = request.POST['checkindate']
+        checkoutdate = request.POST['checkoutdate']
         if request.POST['goback'] == 'True':
             return render(request, 'main/up_add_order1.html', {
                 'login': request.COOKIES.get('login'),
                 'goback': True,
                 'error_no_empty_rooms': False,
-                'checkindate': request.POST['checkindate'],
-                'checkoutdate': request.POST['checkoutdate'],
+                'checkindate': checkindate,
+                'checkoutdate': checkoutdate,
                 'numberofguests': request.POST['numberofguests'],
             })
-        roomclass_list = roomclass_list_get(request.POST['checkindate'], request.POST['checkoutdate'], request.POST['numberofguests'])
+        roomclass_list = roomclass_list_get(checkindate, checkoutdate, request.POST['numberofguests'])
         if len(roomclass_list) == 0:
             return render(request, 'main/up_add_order1.html', {
                 'login': request.COOKIES.get('login'),
                 'goback': True,
                 'error_no_empty_rooms': True,
-                'checkindate': request.POST['checkindate'],
-                'checkoutdate': request.POST['checkoutdate'],
+                'checkindate': checkindate,
+                'checkoutdate': checkoutdate,
                 'numberofguests': request.POST['numberofguests'],
             })
         return render(request, 'main/up_add_order2.html', {
             'login': request.COOKIES.get('login'),
-            'checkindate': request.POST['checkindate'],
-            'checkoutdate': request.POST['checkoutdate'],
+            'checkindate': checkindate,
+            'checkoutdate': checkoutdate,
+            'days': (to_date(checkoutdate) - to_date(checkindate)).days,
             'numberofguests': request.POST['numberofguests'],
             'roomclass_list': roomclass_list,
             'foodtype_list': Foodtype.objects.filter(avaliable=True),
@@ -268,7 +282,6 @@ def up_edit_order(request):
         checkindate = orderinfo.checkindate
         checkoutdate = orderinfo.checkoutdate
         numberofguests = orderinfo.numberofguests
-        days = (checkoutdate - checkindate).days
         room = Room.objects.filter(roomid=orderinfo.roomid_id).extra(select={
             'classname': 'SELECT name FROM roomclass WHERE roomclass.roomclassid = room.roomclassid',
             'classcost': 'SELECT cost FROM roomclass WHERE roomclass.roomclassid = room.roomclassid',
@@ -278,6 +291,7 @@ def up_edit_order(request):
             'login': request.COOKIES.get('login'),
             'checkindate': str(checkindate),
             'checkoutdate': str(checkoutdate),
+            'days': (checkoutdate - checkindate).days,
             'numberofguests': numberofguests,
             'room': room,
             'orderid': orderid,

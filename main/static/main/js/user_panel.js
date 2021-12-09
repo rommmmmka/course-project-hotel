@@ -1,10 +1,8 @@
-var select_el = document.getElementById('select');
+let select_el = document.getElementById('select');
 
 function rmorder(link) {
-    console.log(link);
-    if (confirm('Вы уверены, что хотите отменить заказ? Это действие нельзя будет отменить!')) {
+    if (confirm('Вы уверены, что хотите отменить заказ? Это действие нельзя будет отменить!'))
         window.location.href = link;
-    }
 }
 
 function playanim_active() {
