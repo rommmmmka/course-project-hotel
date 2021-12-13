@@ -3,10 +3,6 @@ from .utils import *
 from .forms import *
 from datetime import datetime
 
-"""
-TODO
-"""
-
 
 def register_action(request):
     if request.method == 'POST':
@@ -156,7 +152,6 @@ def editpersonalinfo_action(request):
         return logout_action(request)
     if request.method == 'POST':
         visitor = Visitor.objects.get(visitorid=request.COOKIES.get('id'))
-        print(request.POST)
         visitor.lastname = request.POST['lastname']
         visitor.firstname = request.POST['firstname']
         visitor.patronymic = request.POST['patronymic']
@@ -199,14 +194,7 @@ def register(request):
 def user_panel(request):
     if not check_if_logged_in(request):
         return logout_action(request)
-    # orders = Orderinfo.objects.filter(visitorid=request.COOKIES.get('id')).extra(select={
-    #     "active": "SELECT orderactive FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
-    #     "payed": "SELECT orderpayed FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId",
-    #     "paymentname": "SELECT name FROM paymenttype WHERE paymenttype.PaymentTypeId = (SELECT PaymentTypeId FROM orderstatus WHERE orderstatus.OrderId = orderinfo.OrderId)",
-    #     "roomnumber": "SELECT roomnumber FROM room WHERE room.roomid = orderinfo.roomid",
-    # }).order_by('-checkindate')
     orders = Orderinfo.objects.raw("CALL get_orders(%s, %s);", [request.COOKIES.get('id'), 1 if request.COOKIES.get('order_by') is None else 2])
-
     orderid = request.GET.get('select_orderid')
     ordertype = ''
     if orderid is not None:

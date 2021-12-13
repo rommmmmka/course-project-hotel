@@ -8,7 +8,7 @@ class VisitorAdmin(admin.ModelAdmin):
 
 
 class OrderInfoAdmin(admin.ModelAdmin):
-    list_display = ('orderid', 'roomid', 'checkindate', 'checkoutdate', 'numberofguests', 'cost')
+    list_display = ('orderid', 'visitorid', 'roomid', 'checkindate', 'checkoutdate', 'numberofguests', 'cost')
     list_filter = (['numberofguests'])
 
 

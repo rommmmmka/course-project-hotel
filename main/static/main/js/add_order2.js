@@ -18,7 +18,7 @@ function catchSubmit(e) {
 
     for (let i = 0; i < addservices.length; ++i)
         if (addservices[i].checked)
-            cost += addservices_costs[i] * days * guests;
+            cost += addservices_costs[i] * days;
 
     if (!confirm('Вы уверены, что хотите создать заказ? Его стоимость составит ' + cost + ' BYN!'))
         e.preventDefault();

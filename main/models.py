@@ -1,16 +1,11 @@
-# roomclass -> numberofpeople, comment
-# foodtype -> comment
-# room, foodtype, paymenttype, addservicetype -> avaliable
-# visitor -> citizenship, passport
-# room -> del hotelnumber
 from django.db import models
 
 
 class Visitor(models.Model):
-    visitorid = models.AutoField(db_column='VisitorId', primary_key=True, verbose_name='№')
+    visitorid = models.IntegerField(db_column='VisitorId', primary_key=True, verbose_name='№')
     login = models.CharField(db_column='Login', max_length=30, blank=True, null=True, verbose_name='Логин')
     passwordhash = models.CharField(db_column='PasswordHash', max_length=64, blank=True, null=True, verbose_name='Хеш пароля')
-    session = models.CharField(db_column='Session', max_length=32, blank=True, null=True, verbose_name='ID сессии')
+    session = models.CharField(db_column='Session', max_length=32, blank=True, null=True, verbose_name='Сессионный ключ')
     lastname = models.CharField(db_column='Lastname', max_length=30, blank=True, null=True, verbose_name='Фамилия')
     firstname = models.CharField(db_column='Firstname', max_length=30, blank=True, null=True, verbose_name='Имя')
     patronymic = models.CharField(db_column='Patronymic', max_length=30, blank=True, null=True, verbose_name='Отчество')
@@ -49,7 +44,7 @@ class Room(models.Model):
     roomid = models.AutoField(db_column='RoomId', primary_key=True, verbose_name='№')
     roomclassid = models.ForeignKey('Roomclass', models.DO_NOTHING, db_column='RoomClassId', blank=True, null=True, verbose_name='Класс номера')
     roomnumber = models.PositiveIntegerField(db_column='RoomNumber', blank=True, null=True, verbose_name='Номер комнаты')
-    avaliable = models.IntegerField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
+    avaliable = models.BooleanField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
 
     class Meta:
         managed = True
@@ -67,8 +62,8 @@ class Orderinfo(models.Model):
     roomid = models.ForeignKey('Room', models.DO_NOTHING, db_column='RoomId', blank=True, null=True, verbose_name='Комната')
     checkindate = models.DateField(db_column='CheckInDate', blank=True, null=True, verbose_name='Дата заселения')
     checkoutdate = models.DateField(db_column='CheckOutDate', blank=True, null=True, verbose_name='Дата выселения')
-    numberofguests = models.IntegerField(db_column='NumberOfGuests', blank=True, null=True, verbose_name='Количество гостей')
-    cost = models.IntegerField(db_column='Cost', blank=True, null=True, verbose_name='Стоимость')
+    numberofguests = models.PositiveIntegerField(db_column='NumberOfGuests', blank=True, null=True, verbose_name='Количество гостей')
+    cost = models.PositiveIntegerField(db_column='Cost', blank=True, null=True, verbose_name='Стоимость')
 
     class Meta:
         managed = True
@@ -84,7 +79,7 @@ class Foodtype(models.Model):
     foodtypeid = models.AutoField(db_column='FoodTypeId', primary_key=True, verbose_name='№')
     name = models.CharField(db_column='Name', max_length=30, blank=True, null=True, verbose_name='Название')
     cost = models.PositiveIntegerField(db_column='Cost', blank=True, null=True, verbose_name='Стоимость')
-    avaliable = models.IntegerField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
+    avaliable = models.BooleanField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
     comment = models.CharField(db_column='Comment', max_length=200, blank=True, null=True, verbose_name='Описание')
 
     class Meta:
@@ -112,7 +107,7 @@ class Food(models.Model):
 class Paymenttype(models.Model):
     paymenttypeid = models.AutoField(db_column='PaymentTypeId', primary_key=True, verbose_name='№')
     name = models.CharField(db_column='Name', max_length=30, blank=True, null=True, verbose_name='Название')
-    avaliable = models.IntegerField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
+    avaliable = models.BooleanField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
 
     class Meta:
         managed = True
@@ -128,8 +123,8 @@ class Orderstatus(models.Model):
     orderstatusid = models.AutoField(db_column='OrderStatusId', primary_key=True, verbose_name='№')
     orderid = models.ForeignKey(Orderinfo, models.DO_NOTHING, db_column='OrderId', blank=True, null=True, verbose_name='Заказ')
     paymenttypeid = models.ForeignKey('Paymenttype', models.DO_NOTHING, db_column='PaymentTypeId', blank=True, null=True, verbose_name='Тип оплаты')
-    orderactive = models.IntegerField(db_column='OrderActive', blank=True, null=True, verbose_name='Активный')
-    orderpayed = models.IntegerField(db_column='OrderPayed', blank=True, null=True, verbose_name='Оплаченный')
+    orderactive = models.BooleanField(db_column='OrderActive', blank=True, null=True, verbose_name='Активный')
+    orderpayed = models.BooleanField(db_column='OrderPayed', blank=True, null=True, verbose_name='Оплаченный')
 
     class Meta:
         managed = True
@@ -145,13 +140,13 @@ class Addservicetype(models.Model):
     addservicetypeid = models.AutoField(db_column='AddServiceTypeId', primary_key=True, verbose_name='№')
     name = models.CharField(db_column='Name', max_length=30, blank=True, null=True, verbose_name='Название')
     cost = models.PositiveIntegerField(db_column='Cost', blank=True, null=True, verbose_name='Стоимость')
-    avaliable = models.IntegerField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
+    avaliable = models.BooleanField(db_column='Avaliable', blank=True, null=True, verbose_name='Активный')
 
     class Meta:
         managed = True
         db_table = 'addservicetype'
-        verbose_name = 'Тип доп. услуги'
-        verbose_name_plural = 'Типы доп. услуг'
+        verbose_name = 'Набор доп. услуг'
+        verbose_name_plural = 'Наборы доп. услуг'
 
     def __str__(self):
         return self.name
