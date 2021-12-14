@@ -96,6 +96,7 @@ class Food(models.Model):
     foodid = models.AutoField(db_column='FoodId', primary_key=True, verbose_name='№')
     orderid = models.ForeignKey('Orderinfo', models.DO_NOTHING, db_column='OrderId', blank=True, null=True, verbose_name='Заказ')
     foodtypeid = models.ForeignKey('Foodtype', models.DO_NOTHING, db_column='FoodTypeId', blank=True, null=True, verbose_name='Тип питания')
+    included = models.BooleanField(db_column='Included', blank=True, null=True, verbose_name='Включено в заказ')
 
     class Meta:
         managed = True

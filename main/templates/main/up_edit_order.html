@@ -45,6 +45,7 @@
         <div class="order_title_comment">(наведите на тип для получения доп. информации)</div>
         <div class="order_title_comment">(цена указана за одну ночь на одного человека)</div>
         <div class="editorder_block">
+            <label title="Без питания"><input type="radio" name="foodtype" value="0" {% if foodtypeid_check == 0 %}checked{% endif %} required> Only Room (0 руб.)</label>
             {% for el in foodtype_list %}
                 <label title="{{ el.comment }}"><input type="radio" name="foodtype" value="{{ el.foodtypeid }}" {% if el.foodtypeid == foodtypeid_check %}checked{% endif %} required> {{ el.name }} ({{ el.cost }} руб.)</label>
             {% endfor %}
@@ -69,7 +70,7 @@
 {% block script %}
     <script>
         const room_cost = {{ room.classcost }};
-        const food_costs = [{% for el in foodtype_list %}{{ el.cost }}, {% endfor %}];
+        const food_costs = [0, {% for el in foodtype_list %}{{ el.cost }}, {% endfor %}];
         const addservices_costs = [{% for el in addservicetype_list %}{{ el.cost }}, {% endfor %}];
         const days = {{ days }};
         const guests = {{ numberofguests }};

@@ -53,7 +53,9 @@ def addorder_action(request):
         days = (to_date(request.POST['checkoutdate']) - to_date(request.POST['checkindate'])).days
         numberofguests = int(request.POST['numberofguests'])
         roomCost = int(Roomclass.objects.get(roomclassid=request.POST['roomclass']).cost)
-        foodCost = int(Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost)
+        foodCost = 0
+        if request.POST['foodtype'] != '0':
+            foodCost = int(Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost)
         addServicesCost = 0
         if 'addservicetypes' in request.POST.keys():
             for el in request.POST.getlist('addservicetypes'):
@@ -77,7 +79,11 @@ def addorder_action(request):
         orderstatus_obj.paymenttypeid_id = request.POST['paymenttype']
         orderstatus_obj.save()
         food_obj = Food(orderid=orderinfo_obj)
-        food_obj.foodtypeid_id = request.POST['foodtype']
+        if request.POST['foodtype'] == '0':
+            food_obj.included = False
+        else:
+            food_obj.included = True
+            food_obj.foodtypeid_id = request.POST['foodtype']
         food_obj.save()
         if 'addservicetypes' in request.POST.keys():
             for el in request.POST.getlist('addservicetypes'):
@@ -109,9 +115,15 @@ def editorder_action(request):
         numberofguests = order.numberofguests
         roomclassid = Room.objects.get(roomid=order.roomid_id).roomclassid_id
         roomcost = Roomclass.objects.get(roomclassid=roomclassid).cost
-        foodcost = Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost
+        foodcost = 0
         food = Food.objects.get(orderid=orderid)
-        food.foodtypeid_id = request.POST['foodtype']
+        if request.POST['foodtype'] == '0':
+            food.foodtypeid_id = None
+            food.included = False
+        else:
+            food.foodtypeid_id = request.POST['foodtype']
+            food.included = True
+            foodcost = Foodtype.objects.get(foodtypeid=request.POST['foodtype']).cost
         food.save()
         addservicescost = 0
         if 'addservicetypes' in request.POST.keys():
@@ -275,6 +287,10 @@ def up_edit_order(request):
             'classcost': 'SELECT cost FROM roomclass WHERE roomclass.roomclassid = room.roomclassid',
             'classcomment': 'SELECT comment FROM roomclass WHERE roomclass.roomclassid = room.roomclassid',
         }).get()
+        foodtypeid_check = 0
+        food_obj = Food.objects.get(orderid=orderid)
+        if food_obj.included == 1:
+            foodtypeid_check = food_obj.foodtypeid_id
         return render(request, 'main/up_edit_order.html', {
             'login': request.COOKIES.get('login'),
             'checkindate': str(checkindate),
@@ -284,7 +300,7 @@ def up_edit_order(request):
             'room': room,
             'orderid': orderid,
             'foodtype_list': Foodtype.objects.filter(avaliable=True),
-            'foodtypeid_check': Food.objects.get(orderid=orderid).foodtypeid_id,
+            'foodtypeid_check': foodtypeid_check,
             'addservicetype_list': Addservicetype.objects.filter(avaliable=True),
             'addservicetypeid_check': Addservices.objects.filter(orderid=orderid).values_list('addservicetypeid_id', flat=True),
             'paymenttype_list': Paymenttype.objects.filter(avaliable=True),
