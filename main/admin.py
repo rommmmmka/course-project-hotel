@@ -18,7 +18,7 @@ class FoodTypesAdmin(admin.ModelAdmin):
 
 
 class FoodAdmin(admin.ModelAdmin):
-    list_display = ('foodid', 'orderid', 'foodtypeid')
+    list_display = ('foodid', 'orderid', 'foodtypeid', 'included')
 
 
 class OrderStatusAdmin(admin.ModelAdmin):
